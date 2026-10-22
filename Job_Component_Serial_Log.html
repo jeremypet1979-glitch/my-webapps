@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Component Serial Logger (Live Auto-Save)</title>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      --primary: #0f766e;
+      --primary-hover: #115e59;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --success: #16a34a;
+      --warning: #d97706;
+      --danger: #dc2626;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      max-width: 920px;
+      width: 100%;
+      background: var(--card);
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+    h1 { margin: 0 0 6px 0; font-size: 1.45rem; color: #0f172a; }
+    .subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 18px; }
+
+    /* Live File Connection Banner */
+    .sync-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+    }
+    .sync-banner.connected {
+      background: #dcfce7;
+      border-color: #86efac;
+      color: #14532d;
+    }
+    .sync-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.92rem;
+    }
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: #94a3b8;
+      flex-shrink: 0;
+    }
+    .dot.live {
+      background: #16a34a;
+      box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.2);
+    }
+
+    /* Toast / Status Banner */
+    #statusBanner {
+      display: none;
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+    .status-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .status-error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+    .status-warn { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+
+    /* Duplicate Inline Prompt */
+    #dupPrompt {
+      display: none;
+      background: #fffbeb;
+      border: 1px solid #f59e0b;
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.2fr;
+      gap: 14px;
+    }
+    @media (max-width: 720px) {
+      .grid-3 { grid-template-columns: 1fr; }
+    }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.9rem; }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    input[type="text"]:focus {
+      outline: 2px solid var(--primary);
+      border-color: transparent;
+    }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; }
+    button, .file-label {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    button:hover, .file-label:hover { opacity: 0.93; }
+    button.secondary, .file-label.secondary { background: #475569; }
+    button.success { background: var(--success); }
+    button.danger { background: var(--danger); }
+    button.warning { background: var(--warning); }
+
+    #reader {
+      width: 100%;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      display: none;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 0.9rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    th { background: #f1f5f9; }
+    .badge {
+      background: #ccfbf1;
+      color: #115e59;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .comp-tag {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+    input[type="file"] { display: none; }
+    .lock-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 0.82rem; color: #334155; }
+    .delete-btn {
+      background: #fee2e2;
+      color: #b91c1c;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      border-radius: 6px;
+    }
+    @keyframes flashGreen {
+      0% { background-color: #bbf7d0; }
+      100% { background-color: transparent; }
+    }
+    .new-row-flash { animation: flashGreen 1.2s ease-out; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Job Component Serial Logger</h1>
+  <div class="subtitle">Associate individual Component Names/Designations & Serial Numbers with a Job and Equipment/Skid.</div>
+
+  <!-- Direct File System Auto-Save Banner -->
+  <div class="sync-banner" id="syncBanner">
+    <div class="sync-status">
+      <span class="dot" id="syncDot"></span>
+      <div id="syncText">
+        <strong>Not linked to a live Excel file yet.</strong><br>
+        <span style="font-size:0.82rem; color:#475569;">Click "Connect Live Excel File" (Chrome/Edge) to auto-save directly to <b>Job_Component_Serial_Log.xlsx</b> on every scan.</span>
+      </div>
+    </div>
+    <div class="row">
+      <button type="button" class="success" onclick="connectLiveExcelFile()">🔗 Connect Live Excel File (Auto-Save)</button>
+      <label class="file-label secondary" title="Fallback for browsers without direct file editing">
+        📂 Standard Upload
+        <input type="file" id="excelUpload" accept=".xlsx, .xls, .csv" onchange="importExcelFallback(event)">
+      </label>
+    </div>
+  </div>
+
+  <!-- On-Screen Status Notification -->
+  <div id="statusBanner"></div>
+
+  <!-- Duplicate Confirmation Bar -->
+  <div id="dupPrompt">
+    <span id="dupText" style="font-weight:600; color:#92400e;"></span>
+    <div class="row">
+      <button type="button" class="warning" id="confirmDupBtn">Add Anyway</button>
+      <button type="button" class="secondary" onclick="cancelDuplicate()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Input Form -->
+  <form id="entryForm" onsubmit="handleFormSubmit(event)">
+    <div class="grid-3">
+      <div class="form-group">
+        <label for="jobNumber">Job Number</label>
+        <input type="text" id="jobNumber" placeholder="e.g., JOB-2026-1001" autofocus>
+        <div class="lock-row">
+          <input type="checkbox" id="lockJob" checked>
+          <label for="lockJob" style="margin:0; font-weight:normal;">Keep Job Number active</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="equipSkid">Equipment or Skid #</label>
+        <input type="text" id="equipSkid" placeholder="e.g., SKID-01 or EQ-400">
+        <div class="lock-row">
+          <input type="checkbox" id="lockEquip" checked>
+          <label for="lockEquip" style="margin:0; font-weight:normal;">Keep Equipment/Skid active</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="compName">Component Name / Designation</label>
+        <input type="text" id="compName" list="componentSuggestions" placeholder="e.g., Control Valve (PCV-101)">
+        <datalist id="componentSuggestions">
+          <option value="Pressure Transmitter (PT-101)">
+          <option value="Flow Meter (FIT-201)">
+          <option value="Main Control Valve (PCV-101)">
+          <option value="Drive Motor (MTR-01)">
+          <option value="PLC Processor (PLC-01)">
+        </datalist>
+        <div class="lock-row">
+          <input type="checkbox" id="lockComp">
+          <label for="lockComp" style="margin:0; font-weight:normal;">Keep Component Name active</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Camera Scanner Container -->
+    <div id="reader"></div>
+
+    <div class="form-group">
+      <label for="compSerial">Component QR / Serial Number</label>
+      <div class="row">
+        <input type="text" id="compSerial" placeholder="Scan Component QR/Barcode or type Serial & press Enter" style="flex: 1;">
+        <button type="button" class="secondary" id="toggleScanBtn" onclick="toggleScanner()">📷 Camera Scan</button>
+        <button type="submit">+ Add Component</button>
+      </div>
+    </div>
+  </form>
+
+  <hr style="border: 0; border-top: 1px solid var(--border); margin: 20px 0;">
+
+  <!-- Table Controls -->
+  <div class="row" style="justify-content: space-between; align-items: center;">
+    <div>
+      <strong>Component Serial Log</strong> <span class="badge" id="countBadge">0 components</span>
+    </div>
+    <div class="row">
+      <button type="button" class="secondary" onclick="exportExcelDownload()">📥 Download Copy (.xlsx)</button>
+      <button type="button" class="danger" onclick="clearRecords()">Clear List</button>
+    </div>
+  </div>
+
+  <!-- Log Table -->
+  <div style="overflow-x: auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Timestamp</th>
+          <th>Job Number</th>
+          <th>Equipment / Skid #</th>
+          <th>Component Name / Designation</th>
+          <th>Component Serial #</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="logTableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  let memoryRecords = [];
+  let fileHandle = null;
+  let loadedWorkbook = null;
+  let html5QrCode = null;
+  let isScanning = false;
+  let lastScannedCode = '';
+  let lastScanTime = 0;
+
+  function loadStoredRecords() {
+    try {
+      const saved = localStorage.getItem('jobComponentSerialRecords');
+      if (saved) memoryRecords = JSON.parse(saved);
+    } catch (e) {
+      console.warn('localStorage unavailable, using in-memory session.');
+    }
+  }
+
+  function saveStoredRecords() {
+    try {
+      localStorage.setItem('jobComponentSerialRecords', JSON.stringify(memoryRecords));
+    } catch (e) {}
+  }
+
+  function showStatus(msg, type = 'success') {
+    const banner = document.getElementById('statusBanner');
+    banner.textContent = msg;
+    banner.className = `status-${type}`;
+    banner.style.display = 'block';
+    clearTimeout(window.statusTimer);
+    window.statusTimer = setTimeout(() => {
+      banner.style.display = 'none';
+    }, 4500);
+  }
+
+  function formatTimestamp(date) {
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  }
+
+  // =========================================================================
+  // 1. DIRECT FILE SYSTEM AUTO-SAVE
+  // =========================================================================
+  async function connectLiveExcelFile() {
+    if (!window.showOpenFilePicker) {
+      showStatus('Direct file auto-save requires Chrome or Edge on a computer. Using standard upload instead.', 'warn');
+      document.getElementById('excelUpload').click();
+      return;
+    }
+
+    try {
+      const [handle] = await window.showOpenFilePicker({
+        types: [{
+          description: 'Excel Spreadsheet',
+          accept: {
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
+            'application/vnd.ms-excel': ['.xls']
+          }
+        }],
+        multiple: false
+      });
+
+      fileHandle = handle;
+
+      const opts = { mode: 'readwrite' };
+      if ((await fileHandle.queryPermission(opts)) !== 'granted') {
+        if ((await fileHandle.requestPermission(opts)) !== 'granted') {
+          showStatus('Write permission was denied. Cannot auto-save directly to the file.', 'error');
+          return;
+        }
+      }
+
+      const file = await fileHandle.getFile();
+      const arrayBuffer = await file.arrayBuffer();
+      parseExcelBuffer(arrayBuffer, file.name, true);
+
+      document.getElementById('syncBanner').classList.add('connected');
+      document.getElementById('syncDot').classList.add('live');
+      document.getElementById('syncText').innerHTML = `
+        <strong>Live Auto-Save Active: <u>${file.name}</u></strong><br>
+        <span style="font-size:0.82rem;">Every component scan saves directly to this file! (Keep the file closed in desktop Excel while scanning).</span>
+      `;
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        showStatus('Could not connect to file: ' + err.message, 'error');
+      }
+    }
+  }
+
+  function buildWorkbookBuffer() {
+    const ws = XLSX.utils.json_to_sheet(memoryRecords, {
+      header: ["Timestamp", "JobNumber", "EquipmentOrSkidNumber", "ComponentName", "ComponentSerial"]
+    });
+    ws['!cols'] = [{ wch: 22 }, { wch: 20 }, { wch: 26 }, { wch: 32 }, { wch: 28 }];
+
+    let wb;
+    if (loadedWorkbook) {
+      wb = loadedWorkbook;
+      const targetSheet = wb.SheetNames.includes("Component_Serial_Log")
+        ? "Component_Serial_Log"
+        : wb.SheetNames[0];
+      wb.Sheets[targetSheet] = ws;
+    } else {
+      wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Component_Serial_Log");
+    }
+
+    return XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+  }
+
+  async function autoSaveToDisk() {
+    saveStoredRecords();
+    renderTable();
+
+    if (!fileHandle) return;
+
+    try {
+      const buffer = buildWorkbookBuffer();
+      const writable = await fileHandle.createWritable();
+      await writable.write(buffer);
+      await writable.close();
+      showStatus(`✅ Auto-saved directly to ${fileHandle.name} (${memoryRecords.length} components)`, 'success');
+    } catch (err) {
+      showStatus(`⚠️ Could not write to ${fileHandle.name}. Make sure the file is CLOSED in desktop Excel!`, 'error');
+      console.error(err);
+    }
+  }
+
+  // =========================================================================
+  // 2. FORM HANDLING & COMPONENT ADDITION
+  // =========================================================================
+  function handleFormSubmit(e) {
+    e.preventDefault();
+    addRecord();
+  }
+
+  function addRecord(scannedText = null, forceDuplicate = false) {
+    const jobInput = document.getElementById('jobNumber');
+    const equipInput = document.getElementById('equipSkid');
+    const compNameInput = document.getElementById('compName');
+    const compSerialInput = document.getElementById('compSerial');
+
+    const lockJob = document.getElementById('lockJob').checked;
+    const lockEquip = document.getElementById('lockEquip').checked;
+    const lockComp = document.getElementById('lockComp').checked;
+
+    const jobNumber = jobInput.value.trim();
+    const equipSkid = equipInput.value.trim();
+    const compName = compNameInput.value.trim();
+    const compSerial = (scannedText !== null ? scannedText : compSerialInput.value).trim();
+
+    if (!jobNumber) {
+      showStatus('Please enter a Job Number first.', 'warn');
+      jobInput.focus();
+      return;
+    }
+    if (!equipSkid) {
+      showStatus('Please enter an Equipment or Skid Number first.', 'warn');
+      equipInput.focus();
+      return;
+    }
+    if (!compName) {
+      showStatus('Please enter a Component Name / Designation.', 'warn');
+      compNameInput.focus();
+      return;
+    }
+    if (!compSerial) {
+      showStatus('Please scan or enter the Component Serial Number.', 'warn');
+      compSerialInput.focus();
+      return;
+    }
+
+    // Duplicate Component Serial check
+    const isDuplicate = memoryRecords.some(r => String(r.ComponentSerial).toLowerCase() === compSerial.toLowerCase());
+    if (isDuplicate && !forceDuplicate) {
+      const dupPrompt = document.getElementById('dupPrompt');
+      document.getElementById('dupText').textContent = `Component Serial "${compSerial}" is already logged. Add it again?`;
+      dupPrompt.style.display = 'flex';
+      document.getElementById('confirmDupBtn').onclick = () => {
+        dupPrompt.style.display = 'none';
+        addRecord(compSerial, true);
+      };
+      return;
+    }
+
+    document.getElementById('dupPrompt').style.display = 'none';
+
+    const newEntry = {
+      Timestamp: formatTimestamp(new Date()),
+      JobNumber: jobNumber,
+      EquipmentOrSkidNumber: equipSkid,
+      ComponentName: compName,
+      ComponentSerial: compSerial
+    };
+
+    memoryRecords.push(newEntry);
+
+    // Clear fields based on lock checkboxes
+    compSerialInput.value = '';
+    if (!lockComp) compNameInput.value = '';
+    if (!lockEquip) equipInput.value = '';
+    if (!lockJob) jobInput.value = '';
+
+    // Smart cursor focus for the next component
+    if (!lockJob) jobInput.focus();
+    else if (!lockEquip) equipInput.focus();
+    else if (!lockComp) compNameInput.focus();
+    else compSerialInput.focus();
+
+    if (!fileHandle) {
+      showStatus(`Added "${compName}" (${compSerial}). Connect Live Excel File above to auto-save to disk!`, 'success');
+    }
+
+    autoSaveToDisk();
+  }
+
+  function cancelDuplicate() {
+    document.getElementById('dupPrompt').style.display = 'none';
+    document.getElementById('compSerial').value = '';
+    document.getElementById('compSerial').focus();
+  }
+
+  function deleteRecord(index) {
+    memoryRecords.splice(index, 1);
+    autoSaveToDisk();
+  }
+
+  function clearRecords() {
+    memoryRecords = [];
+    saveStoredRecords();
+    renderTable();
+    showStatus('Cleared list in browser.', 'warn');
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById('logTableBody');
+    document.getElementById('countBadge').textContent = `${memoryRecords.length} components`;
+    tbody.innerHTML = '';
+
+    [...memoryRecords].reverse().forEach((rec, revIdx) => {
+      const actualIndex = memoryRecords.length - 1 - revIdx;
+      const tr = document.createElement('tr');
+      if (revIdx === 0) tr.className = 'new-row-flash';
+      tr.innerHTML = `
+        <td>${actualIndex + 1}</td>
+        <td>${rec.Timestamp || ''}</td>
+        <td><strong>${rec.JobNumber || ''}</strong></td>
+        <td>${rec.EquipmentOrSkidNumber || ''}</td>
+        <td><span class="comp-tag">${rec.ComponentName || ''}</span></td>
+        <td><strong>${rec.ComponentSerial || ''}</strong></td>
+        <td><button type="button" class="delete-btn" onclick="deleteRecord(${actualIndex})">✕</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // =========================================================================
+  // 3. EXCEL PARSING & CATALOG AUTOCOMPLETE LOADING
+  // =========================================================================
+  function parseExcelBuffer(arrayBuffer, fileName, replaceExisting = true) {
+    const data = new Uint8Array(arrayBuffer);
+    loadedWorkbook = XLSX.read(data, { type: 'array' });
+
+    // Load main log sheet
+    const targetSheet = loadedWorkbook.SheetNames.includes("Component_Serial_Log")
+      ? "Component_Serial_Log"
+      : loadedWorkbook.SheetNames[0];
+    const worksheet = loadedWorkbook.Sheets[targetSheet];
+    const importedData = XLSX.utils.sheet_to_json(worksheet);
+
+    if (replaceExisting) memoryRecords = [];
+
+    importedData.forEach(row => {
+      memoryRecords.push({
+        Timestamp: row.Timestamp || formatTimestamp(new Date()),
+        JobNumber: row.JobNumber || row.Job_Number || row['Job Number'] || '',
+        EquipmentOrSkidNumber: row.EquipmentOrSkidNumber || row['Equipment or Skid Number'] || '',
+        ComponentName: row.ComponentName || row['Component Name'] || row['Designation'] || '',
+        ComponentSerial: row.ComponentSerial || row.QRSerial || row['Component Serial'] || ''
+      });
+    });
+
+    // If workbook has a Component_Catalog tab, load its items into the autocomplete dropdown
+    if (loadedWorkbook.SheetNames.includes("Component_Catalog")) {
+      const catalogSheet = loadedWorkbook.Sheets["Component_Catalog"];
+      const catalogRows = XLSX.utils.sheet_to_json(catalogSheet);
+      const datalist = document.getElementById('componentSuggestions');
+      if (catalogRows.length > 0) {
+        datalist.innerHTML = '';
+        catalogRows.forEach(c => {
+          const name = c.ComponentName || c['Component Name'] || '';
+          if (name) {
+            const opt = document.createElement('option');
+            opt.value = name;
+            datalist.appendChild(opt);
+          }
+        });
+      }
+    }
+
+    saveStoredRecords();
+    renderTable();
+    showStatus(`Loaded ${importedData.length} component records from "${fileName}".`, 'success');
+  }
+
+  function importExcelFallback(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      parseExcelBuffer(e.target.result, file.name, false);
+      event.target.value = '';
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  function exportExcelDownload() {
+    if (memoryRecords.length === 0) {
+      showStatus('No records to export yet.', 'warn');
+      return;
+    }
+    const buffer = buildWorkbookBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileHandle ? fileHandle.name : 'Job_Component_Serial_Log.xlsx';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // =========================================================================
+  // 4. CAMERA QR / BARCODE SCANNER
+  // =========================================================================
+  function toggleScanner() {
+    const readerDiv = document.getElementById('reader');
+    const btn = document.getElementById('toggleScanBtn');
+
+    if (isScanning) {
+      html5QrCode.stop().then(() => {
+        readerDiv.style.display = 'none';
+        btn.textContent = '📷 Camera Scan';
+        isScanning = false;
+      });
+    } else {
+      readerDiv.style.display = 'block';
+      btn.textContent = '⏹ Stop Camera';
+      html5QrCode = new Html5Qrcode("reader");
+      html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        (decodedText) => {
+          const now = Date.now();
+          if (decodedText === lastScannedCode && (now - lastScanTime) < 2500) return;
+          lastScannedCode = decodedText;
+          lastScanTime = now;
+          addRecord(decodedText);
+        },
+        () => {}
+      ).then(() => {
+        isScanning = true;
+      }).catch(() => {
+        showStatus('Camera access failed. Requires HTTPS or localhost and camera permission.', 'error');
+        readerDiv.style.display = 'none';
+        btn.textContent = '📷 Camera Scan';
+      });
+    }
+  }
+
+  loadStoredRecords();
+  renderTable();
+</script>
+
+</body>
+</html>
