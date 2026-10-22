@@ -496,6 +496,47 @@
 </head>
 <body>
 
+  <!-- Authorized Access Login Overlay -->
+  <div id="loginOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; z-index:9999; display:flex; align-items:center; justifyContent:center; padding:20px;">
+    <div style="background:#ffffff; max-width:420px; width:100%; padding:30px; border-radius:14px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.3); text-align:center;">
+      <div style="font-size:2.5rem; margin-bottom:10px;">🔒</div>
+      <h2 style="margin:0 0 8px 0; color:#0f172a; font-size:1.4rem;">Shop Floor Portal Access</h2>
+      <p style="color:#64748b; font-size:0.9rem; margin-bottom:20px;">Authorized personnel only. Enter your access PIN or Password.</p>
+      
+      <form onsubmit="event.preventDefault(); verifyPortalLogin();">
+        <div style="margin-bottom:14px;">
+          <input type="password" id="loginPinInput" placeholder="Enter Access PIN (Default: 1234)" autofocus style="width:100%; padding:12px; border:2px solid #cbd5e1; border-radius:8px; font-size:1.1rem; text-align:center; letter-spacing:2px;">
+        </div>
+        <button type="submit" style="width:100%; background:#1e40af; color:#fff; padding:12px; border:none; border-radius:8px; font-size:1rem; font-weight:700; cursor:pointer;">Unlock Portal</button>
+      </form>
+
+      <div style="margin-top:16px; font-size:0.8rem; color:#94a3b8;">
+        Need to add allowed users or change PIN? <span style="color:#2563eb; cursor:pointer; text-decoration:underline;" onclick="toggleAdminSettings()">Manage Authorized Users</span>
+      </div>
+
+      <!-- Admin User Management Modal (Hidden by default) -->
+      <div id="adminSettingsModal" style="display:none; margin-top:16px; border-top:1px solid #e2e8f0; padding-top:14px; text-align:left;">
+        <div style="font-weight:700; font-size:0.88rem; margin-bottom:4px; color:#1e293b;">Change Master Admin PIN:</div>
+        <div class="row" style="gap:6px; margin-bottom:10px;">
+          <input type="password" id="newMasterPinInput" placeholder="New Master PIN" style="flex:1; padding:6px; font-size:0.85rem;">
+          <button type="button" class="success sm" onclick="updateMasterPin()">Update PIN</button>
+        </div>
+
+        <div style="font-weight:700; font-size:0.88rem; margin-bottom:4px; color:#1e293b;">Allowed Crew Users / Pins:</div>
+        <div id="allowedUsersList" style="max-height:90px; overflow-y:auto; font-size:0.85rem; background:#f8fafc; padding:8px; border-radius:6px; margin-bottom:8px; border:1px solid #cbd5e1;"></div>
+        <div class="row" style="gap:6px;">
+          <input type="text" id="newUserName" placeholder="Name" style="flex:1; padding:6px; font-size:0.85rem;">
+          <input type="password" id="newUserPin" placeholder="PIN" style="width:80px; padding:6px; font-size:0.85rem;">
+          <button type="button" class="success sm" onclick="addNewAuthorizedUser()">+ Add</button>
+        </div>
+        <div style="margin-top:10px; text-align:center;">
+          <button type="button" class="outline sm" onclick="toggleAdminSettings()">Close Admin</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <!-- Top Navigation & Shared Job Context -->
   <div class="topbar">
     <div class="brand" onclick="switchView('home')">
@@ -2072,6 +2113,77 @@
   function escapeHtml(s) {
     return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
+
+
+
+  // Portal Login & Allowed Users Security Logic
+  let portalSettings = JSON.parse(localStorage.getItem('portal_security_settings') || '{"masterPin": "0522", "allowedUsers": [{"name": "Default Test Tech", "pin": "1234"}]}');
+
+  function verifyPortalLogin() {
+    const val = document.getElementById('loginPinInput').value.trim();
+    const isMaster = (val === portalSettings.masterPin);
+    const matchedUser = portalSettings.allowedUsers.find(u => u.pin === val);
+
+    if (isMaster || matchedUser) {
+      document.getElementById('loginOverlay').style.display = 'none';
+      showToast(`🔓 Welcome, ${isMaster ? 'Administrator' : matchedUser.name}! Access granted.`, 'success');
+    } else {
+      showToast('❌ Access Denied: Invalid PIN or unauthorized user.', 'error');
+      document.getElementById('loginPinInput').value = '';
+      document.getElementById('loginPinInput').focus();
+    }
+  }
+
+  function toggleAdminSettings() {
+    const m = document.getElementById('adminSettingsModal');
+    m.style.display = (m.style.display === 'none' ? 'block' : 'none');
+    renderAllowedUsersList();
+  }
+
+  function renderAllowedUsersList() {
+    const box = document.getElementById('allowedUsersList');
+    box.innerHTML = '';
+    portalSettings.allowedUsers.forEach((u, i) => {
+      box.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; padding:3px 0; border-bottom:1px solid #e2e8f0;"><span>👤 <b>${u.name}</b> (PIN: ****)</span><button class="danger sm" style="padding:2px 6px; font-size:0.75rem;" onclick="portalSettings.allowedUsers.splice(${i},1); saveSecuritySettings(); renderAllowedUsersList();">✕</button></div>`;
+    });
+  }
+
+  function addNewAuthorizedUser() {
+    const name = document.getElementById('newUserName').value.trim();
+    const pin = document.getElementById('newUserPin').value.trim();
+    if (!name || !pin) {
+      showToast('Enter both Name and PIN.', 'warn');
+      return;
+    }
+    portalSettings.allowedUsers.push({ name, pin });
+    saveSecuritySettings();
+    document.getElementById('newUserName').value = '';
+    document.getElementById('newUserPin').value = '';
+    renderAllowedUsersList();
+    showToast(`Added allowed user: ${name}`, 'success');
+  }
+
+  function saveSecuritySettings() {
+    try {
+      localStorage.setItem('portal_security_settings', JSON.stringify(portalSettings));
+    } catch(e) {}
+  }
+
+
+
+
+  function updateMasterPin() {
+    const p = document.getElementById('newMasterPinInput').value.trim();
+    if (!p) {
+      showToast('Enter a valid master PIN.', 'warn');
+      return;
+    }
+    portalSettings.masterPin = p;
+    saveSecuritySettings();
+    document.getElementById('newMasterPinInput').value = '';
+    showToast('🔒 Master Admin PIN updated successfully!', 'success');
+  }
+
 </script>
 </body>
 </html>
