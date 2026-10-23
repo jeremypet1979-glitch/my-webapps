@@ -1456,11 +1456,11 @@
 
 
   // Portal Login & Allowed Users Security Logic
-  let portalSettings = JSON.parse(localStorage.getItem('portal_security_settings') || '{"masterPin": "0522", "allowedUsers": [{"name": "Default Test Tech", "pin": "1211"}]}');
+  let portalSettings = JSON.parse(localStorage.getItem('portal_security_settings') || '{"masterPin": "0522", "allowedUsers": [{"name": "Jeremy", "pin": "0522"}, {"name": "Default Test Tech", "pin": "1234"}]}');
 
   function verifyPortalLogin() {
     const val = document.getElementById('loginPinInput').value.trim();
-    const isMaster = (val === portalSettings.masterPin || val === '1234');
+    const isMaster = (val === portalSettings.masterPin || val === '0522');
     const matchedUser = portalSettings.allowedUsers.find(u => u.pin === val);
 
     if (isMaster || matchedUser) {
