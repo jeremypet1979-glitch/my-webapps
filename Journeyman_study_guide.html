@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Utah Journeyman & Master Electrician Study & Test Portal</title>
+  <title>Utah Journeyman & Master Electrician Comprehensive Study & Practice Suite</title>
   <style>
     :root {
       --primary: #1e40af;
@@ -12,8 +12,8 @@
       --purple: #6d28d9;
       --danger: #dc2626;
       --success: #16a34a;
-      --bg: #0f172a;
-      --card: #1e293b;
+      --bg: #0b0f19;
+      --card: #131c31;
       --text: #f8fafc;
       --muted: #94a3b8;
       --border: #334155;
@@ -38,7 +38,7 @@
       top: 0;
       z-index: 100;
     }
-    .brand { font-size: 1.2rem; font-weight: 700; display: flex; gap: 10px; align-items: center; }
+    .brand { font-size: 1.15rem; font-weight: 700; display: flex; gap: 10px; align-items: center; }
     .badge { background: #3b82f6; color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; text-transform: uppercase; }
     
     .main-container { max-width: 1200px; margin: 24px auto; padding: 0 20px; }
@@ -54,16 +54,16 @@
     
     .nav-pills { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
     .nav-pill {
-      background: #334155;
+      background: #1e293b;
       color: #cbd5e1;
-      border: none;
+      border: 1px solid #334155;
       padding: 10px 18px;
       border-radius: 8px;
       font-weight: 600;
       cursor: pointer;
     }
-    .nav-pill:hover { background: #475569; color: #fff; }
-    .nav-pill.active { background: var(--primary); color: #fff; }
+    .nav-pill:hover { background: #334155; color: #fff; }
+    .nav-pill.active { background: var(--primary); border-color: var(--primary); color: #fff; }
 
     button, .btn {
       background: var(--primary);
@@ -81,7 +81,7 @@
     button.danger { background: var(--danger); }
 
     input, select {
-      background: #0f172a;
+      background: #0b0f19;
       color: #fff;
       border: 1px solid var(--border);
       padding: 10px;
@@ -94,24 +94,24 @@
 
     .calc-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 18px;
     }
     .calc-box {
-      background: #0f172a;
+      background: #0b0f19;
       border: 1px solid var(--border);
-      padding: 16px;
+      padding: 18px;
       border-radius: 8px;
     }
 
     .exam-question {
-      background: #0f172a;
+      background: #0b0f19;
       border: 1px solid var(--border);
-      padding: 18px;
+      padding: 20px;
       border-radius: 8px;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
-    .options-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .options-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
     .option-label {
       background: #1e293b;
       border: 1px solid #475569;
@@ -126,6 +126,21 @@
 
     .view-section { display: none; }
     .view-section.active { display: block; }
+
+    .flashcard {
+      background: #0b0f19;
+      border: 2px solid var(--primary);
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      margin-bottom: 16px;
+    }
   </style>
 </head>
 <body>
@@ -133,10 +148,10 @@
   <div class="topbar">
     <div class="brand">
       <span class="badge" id="levelBadge">Journeyman</span>
-      <span>Utah Electrical License Study & Test Guide (NEC 2023)</span>
+      <span>Utah Electrical License Comprehensive Master Study Suite (NEC 2023)</span>
     </div>
     <div>
-      <label style="font-size:0.8rem; color:var(--muted); margin-right:6px;">Select License Track:</label>
+      <label style="font-size:0.8rem; color:var(--muted); margin-right:6px;">Select Track:</label>
       <select id="licenseLevelSelect" onchange="switchLicenseLevel(this.value)" style="width:180px; display:inline-block; margin:0; padding:6px;">
         <option value="journeyman">Journeyman Electrician</option>
         <option value="master">Master Electrician</option>
@@ -147,120 +162,126 @@
   <div class="main-container">
 
     <div class="nav-pills">
-      <button class="nav-pill active" onclick="switchSection('study')">📖 NEC Code & Theory Study Guide</button>
-      <button class="nav-pill" onclick="switchSection('exam')">📝 Practice Exam Simulator</button>
-      <button class="pill nav-pill" onclick="switchSection('calculator')">🧮 Exam Scientific Calculator</button>
-      <button class="nav-pill" onclick="switchSection('statelaws')">⚖️ Utah State Laws & Admin Rules</button>
+      <button class="nav-pill active" onclick="switchSection('study')">📖 In-Depth Code & Theory Modules</button>
+      <button class="nav-pill" onclick="switchSection('flashcards')">💡 Rapid-Fire Flashcards</button>
+      <button class="nav-pill" onclick="switchSection('exam')">📝 Full Practice Exam Simulator</button>
+      <button class="nav-pill" onclick="switchSection('calculator')">🧮 Exam Scientific & Derating Calculator</button>
+      <button class="nav-pill" onclick="switchSection('statelaws')">⚖️ Utah DOPL Licensing & Laws</button>
     </div>
 
-    <!-- ================= 1. STUDY GUIDE SECTION ================= -->
+    <!-- ================= 1. IN-DEPTH STUDY MODULES ================= -->
     <div id="sec-study" class="view-section active">
       <div class="card">
-        <h2>📖 NEC 2023 & Electrical Theory Quick-Reference Guide</h2>
-        <p style="color:var(--muted);">Compiled from Utah state testing packets, code shortcuts, and electrical theory essentials.</p>
+        <h2>📖 NEC 2023 Comprehensive Study Modules</h2>
+        <p style="color:var(--muted);">Detailed breakdowns by category covering General Code, Grounding & Bonding, Raceways, Motors, and Theory.</p>
         
         <div style="margin-top:20px;">
-          <h3>⚡ High-Yield NEC Article Quick-Lookup</h3>
-          <ul>
-            <li><b>Art. 100:</b> Definitions (Ampacity, Branch Circuit, Continuous Load, Locations).</li>
-            <li><b>110.26:</b> Working Clearances (30" wide, 36" depth, 6'6" headroom).</li>
-            <li><b>210.19(A)(1) / Note 4:</b> Branch Circuit Voltage Drop Recommendation (Max 3%).</li>
-            <li><b>210.52:</b> Dwelling Unit Receptacle Spacings (Wall countertops 12"+, receptacles 20" above).</li>
-            <li><b>250.52 & 250.66:</b> Grounding Electrodes & GEC Sizing (Ground ring min 2 AWG).</li>
-            <li><b>300.5 / T. 300.5:</b> Underground Cover Requirements (Direct burial 24" un-specified, conduit 18").</li>
-            <li><b>310.16:</b> Conductor Ampacity Tables ($75^\circ	ext{C}$ & $90^\circ	ext{C}$ terminations).</li>
-            <li><b>430.250 / T.430.52:</b> Motor Full-Load Amps & Inverse Time Breakers (175%).</li>
-          </ul>
+          <h3>Module 1: General Code Requirements (Articles 90 - 110)</h3>
+          <p>Covers enforcement, purpose, definitions, and installation requirements. Pay close attention to working space requirements under <b>110.26</b> (30 inches wide, depth based on voltage to ground, headroom 6.5 feet), dedicated equipment space, and high-leg identification on 3-phase 4-wire delta systems (<b>110.15</b> - Orange color marking on phase B).</p>
 
-          <h3 style="margin-top:20px;">📐 Essential Formulas for the Exam</h3>
-          <ul>
-            <li><b>Ohm's Law & Power:</b> $I = \frac{E}{R}$, $P = E \times I$, $P = I^2 \times R$, $R = \frac{E^2}{P}$</li>
-            <li><b>Single-Phase Voltage Drop ($V_d$):</b> $V_d = \frac{2 \times K \times I \times L}{\text{Cmil}}$ (where $K = 12.9$ for copper, $21.2$ for aluminum).</li>
-            <li><b>Three-Phase Voltage Drop ($V_d$):</b> $V_d = \frac{1.732 \times K \times I \times L}{\text{Cmil}}$</li>
-            <li><b>Transformer Ratios:</b> $\frac{E_p}{E_s} = \frac{I_s}{I_p} = \frac{N_p}{N_s}$</li>
-            <li><b>Power Factor Correction:</b> $\text{kVar} = \sqrt{\text{VA}_{\text{app}}^2 - \text{Watts}^2}$</li>
-          </ul>
+          <h3 style="margin-top:20px;">Module 2: Grounding and Bonding (Article 250)</h3>
+          <p>One of the most heavily weighted sections on Utah state exams. Review the grounding electrode system (<b>250.50</b> - water pipe, metal frame, concrete-encased electrode/Ufer ground, ground ring), sizing the grounding electrode conductor using <b>Table 250.66</b>, and sizing equipment grounding conductors (EGCs) using <b>Table 250.122</b> based on the rating of the overcurrent device.</p>
+
+          <h3 style="margin-top:20px;">Module 3: Wiring Methods and Raceways (Chapter 3)</h3>
+          <p>Covers support and securing intervals for NM cable (334.30 - within 12 inches of box, every 4.5 feet), AC/MC cable, rigid metal conduit (RMC), EMT, and PVC. Review box fill calculations (<b>314.16</b>), pull and junction box sizing (<b>314.28</b> - 6 times trade size for straight pulls, 8 times for angle pulls), and underground cover requirements (<b>Table 300.5</b>).</p>
+
+          <h3 style="margin-top:20px;">Module 4: Motors, Air Conditioning, and Transformers (Chapters 4 & 450)</h3>
+          <p>Master the application of <b>Table 430.250</b> for motor full-load currents, sizing branch-circuit short-circuit protection using <b>Table 430.52</b> (inverse time breakers at 250%), disconnecting means sizing (115% of FLC under 430.110), and transformer overcurrent protection rules (<b>Table 450.3(B)</b> - 125% or 250%).</p>
         </div>
       </div>
     </div>
 
-    <!-- ================= 2. PRACTICE EXAM SIMULATOR ================= -->
+    <!-- ================= 2. FLASHCARD MODE ================= -->
+    <div id="sec-flashcards" class="view-section">
+      <div class="card">
+        <h2>💡 Rapid-Fire NEC Code Flashcards</h2>
+        <p style="color:var(--muted);">Test your instant recall on key NEC articles and code requirements. Click the card to flip between Question and Answer.</p>
+        
+        <div class="flashcard" onclick="flipFlashcard()">
+          <div id="flashcardContent" style="font-size:1.2rem; font-weight:700;">Loading flashcard...</div>
+          <div style="font-size:0.8rem; color:var(--muted); margin-top:14px;">(Click card to flip)</div>
+        </div>
+
+        <div class="row" style="justify-content:center; gap:10px;">
+          <button onclick="prevFlashcard()">⬅ Previous</button>
+          <button class="success" onclick="nextFlashcard()">Next Card ➡</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= 3. PRACTICE EXAM SIMULATOR ================= -->
     <div id="sec-exam" class="view-section">
       <div class="card">
         <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:14px;">
-          <h2 id="examTitle" style="margin:0;">📝 Journeyman Electrical Practice Exam</h2>
+          <h2 id="examTitle" style="margin:0;">📝 Full Practice Exam Simulator</h2>
           <button class="success" onclick="gradeExam()">📊 Submit & Grade Exam</button>
         </div>
-        <p style="color:var(--muted);">Select the correct answers based on the NEC 2023 and Utah state standards.</p>
+        <p style="color:var(--muted);">Complete practice exam with instant grading, detailed code rationales, and formula breakdowns.</p>
         <div id="examQuestionsContainer"></div>
       </div>
     </div>
 
-    <!-- ================= 3. CALCULATOR SECTION ================= -->
+    <!-- ================= 4. CALCULATOR SECTION ================= -->
     <div id="sec-calculator" class="view-section">
       <div class="card">
-        <h2>🧮 Electrical Exam Scientific & Calculation Tool</h2>
-        <p style="color:var(--muted);">Designed specifically for quick calculations during Utah electrical licensing exams.</p>
+        <h2>🧮 Advanced Electrical Exam Calculator Suite</h2>
+        <p style="color:var(--muted);">Professional tools for voltage drop, ampacity derating factors, and parallel circuits.</p>
         
         <div class="calc-grid">
           <!-- Calc 1: Voltage Drop -->
           <div class="calc-box">
-            <h4>⚡ Voltage Drop Calculator</h4>
+            <h4>⚡ Voltage Drop ($V_d$)</h4>
             <label>System Type:</label>
             <select id="calcVdPhase"><option value="1">Single Phase (2-wire)</option><option value="1.732">Three Phase</option></select>
             <label>Conductor Material:</label>
             <select id="calcVdK"><option value="12.9">Copper (K=12.9)</option><option value="21.2">Aluminum (K=21.2)</option></select>
             <label>Current (Amps):</label><input type="number" id="calcVdAmps" value="30">
             <label>One-Way Distance (Feet):</label><input type="number" id="calcVdLength" value="150">
-            <label>Circular Mil Area (Cmil) [e.g. 8AWG=16510, 3/0=167800]:</label><input type="number" id="calcVdCmil" value="16510">
+            <label>Circular Mil Area (Cmil):</label><input type="number" id="calcVdCmil" value="16510">
             <button onclick="calculateVd()" class="success" style="width:100%; margin-top:8px;">Calculate Voltage Drop</button>
             <div id="calcVdResult" style="margin-top:10px; font-weight:700; color:#60a5fa;"></div>
           </div>
 
-          <!-- Calc 2: Ohm's Law & Power -->
+          <!-- Calc 2: Ampacity Derating (Temperature & Bundling) -->
           <div class="calc-box">
-            <h4>🔌 Ohm's Law & Power (P = E × I)</h4>
-            <label>Voltage (Volts - E):</label><input type="number" id="calcOhmsE" value="120">
-            <label>Current (Amps - I):</label><input type="number" id="calcOhmsI" value="10">
-            <label>Resistance (Ohms - R):</label><input type="number" id="calcOhmsR" placeholder="Optional">
-            <button onclick="calculateOhms()" class="success" style="width:100%; margin-top:8px;">Compute P, E, I, R</button>
-            <div id="calcOhmsResult" style="margin-top:10px; font-weight:700; color:#60a5fa;"></div>
+            <h4>🌡️ Conductor Ampacity Derating</h4>
+            <label>Base Ampacity ($75^\circ	ext{C}$ Table 310.16):</label><input type="number" id="calcBaseAmp" value="85">
+            <label>Ambient Temp Correction Factor (Table 310.15(B)(1)):</label><input type="number" id="calcTempFactor" value="0.88" step="0.01">
+            <label>Adjustment Factor for Current-Carrying Conductors (Table 310.15(C)(1)):</label><input type="number" id="calcBundleFactor" value="0.80" step="0.01">
+            <button onclick="calculateDerate()" class="success" style="width:100%; margin-top:8px;">Calculate Allowable Ampacity</button>
+            <div id="calcDerateResult" style="margin-top:10px; font-weight:700; color:#60a5fa;"></div>
           </div>
 
-          <!-- Calc 3: Parallel Resistance -->
+          <!-- Calc 3: Ohm's Law & Power -->
           <div class="calc-box">
-            <h4>🔀 Parallel Resistors (R1, R2, R3)</h4>
-            <label>Resistor 1 (Ohms):</label><input type="number" id="calcR1" value="100">
-            <label>Resistor 2 (Ohms):</label><input type="number" id="calcR2" value="100">
-            <label>Resistor 3 (Ohms):</label><input type="number" id="calcR3" value="0">
-            <button onclick="calculateParallel()" class="success" style="width:100%; margin-top:8px;">Calculate Total Resistance ($R_T$)</button>
-            <div id="calcParallelResult" style="margin-top:10px; font-weight:700; color:#60a5fa;"></div>
+            <h4>🔌 Ohm's Law & Power</h4>
+            <label>Voltage (E):</label><input type="number" id="calcOhmsE" value="208">
+            <label>Current (I):</label><input type="number" id="calcOhmsI" value="25">
+            <label>Resistance (R) [Optional]:</label><input type="number" id="calcOhmsR" placeholder="">
+            <button onclick="calculateOhms()" class="success" style="width:100%; margin-top:8px;">Compute P, E, I, R</button>
+            <div id="calcOhmsResult" style="margin-top:10px; font-weight:700; color:#60a5fa;"></div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ================= 4. STATE LAWS SECTION ================= -->
+    <!-- ================= 5. STATE LAWS SECTION ================= -->
     <div id="sec-statelaws" class="view-section">
       <div class="card">
-        <h2>⚖️ Utah State Electrical Licensing Laws & Administrative Rules</h2>
-        <p style="color:var(--muted);">Overview of DOPM (Division of Occupational and Professional Licensing) regulations for Utah electricians.</p>
+        <h2>⚖️ Utah DOPL Electrical Licensing Requirements & Laws</h2>
+        <p style="color:var(--muted);">Official guidelines for Utah licensure, apprenticeship hours, and continuing education.</p>
         
-        <h3>1. Licensing Classifications & Experience Requirements</h3>
+        <h3>1. Licensing Classifications & Experience Prerequisites</h3>
         <ul>
-          <li><b>Journeyman Electrician:</b> Requires completion of an approved electrical apprenticeship program (minimum 4 years / 8,000 hours of approved work experience under a licensed Master Electrician) plus passing score on the Utah Journeyman Electrician exam.</li>
-          <li><b>Master Electrician:</b> Requires at least 2 years of licensed experience as a Journeyman Electrician (or equivalent supervisory engineering experience) and passing the Master Electrician exam.</li>
+          <li><b>Apprentice Electrician:</b> Must be registered with the Utah Division of Occupational and Professional Licensing (DOPL) while working under supervision.</li>
+          <li><b>Journeyman Electrician:</b> Requires verified completion of a 4-year (8,000 hours) approved apprenticeship program, including 576 hours of classroom instruction, plus passing the Utah Journeyman exam.</li>
+          <li><b>Master Electrician:</b> Requires 2 years of active licensed experience as a Journeyman Electrician and passing the Master Electrician examination.</li>
         </ul>
 
-        <h3 style="margin-top:20px;">2. Continuing Education (CEU) Requirements</h3>
+        <h3 style="margin-top:20px;">2. Continuing Education Unit (CEU) Cycle</h3>
         <ul>
-          <li>Utah electricians must complete **16 hours of continuing education** every 2-year licensing cycle (renewing by November 30 of odd-numbered years).</li>
-          <li>At least 12 hours must be Core NEC code updates.</li>
-        </ul>
-
-        <h3 style="margin-top:20px;">3. Supervision Ratios</h3>
-        <ul>
-          <li>On any job site, a licensed Master or Journeyman Electrician may supervise apprentice electricians in accordance with Utah state ratio limits to ensure safety and code compliance.</li>
+          <li>Renewal deadline is **November 30 of odd-numbered years**.</li>
+          <li>Requires **16 total hours** of approved CEUs, with a minimum of **12 hours in Core NEC code updates**.</li>
         </ul>
       </div>
     </div>
@@ -284,7 +305,41 @@
     event.target.classList.add('active');
   }
 
-  // Question Banks for Journeyman vs Master
+  // Flashcard Data
+  const flashcards = [
+    { q: "What is the minimum working space depth in front of a 480V panel (Condition 2)?", a: "3.5 feet (42 inches) per NEC Table 110.26(A)(1)" },
+    { q: "What color must the high-leg (voltage-to-ground high leg) be identified with on a 3-phase 4-wire delta system?", a: "Orange color marking per NEC 110.15" },
+    { q: "What is the maximum recommended voltage drop on branch circuits per NEC 210.19(A) Informational Note No. 4?", a: "3% max on branch circuits (5% total combined feeder and branch circuit)" },
+    { q: "What is the direct burial cover requirement for UF cable under a residential lawn per Table 300.5?", a: "24 inches minimum" },
+    { q: "What percentage of box fill is allowed for a box containing four 12 AWG conductors and one internal cable clamp?", a: "Must calculate per NEC 314.16 (2.25 cubic inches per 12 AWG conductor, plus 1 count for all clamps combined)" }
+  ];
+  let currentCardIdx = 0;
+  let showingAnswer = false;
+
+  function renderFlashcard() {
+    const fc = document.getElementById('flashcardContent');
+    fc.textContent = showingAnswer ? flashcards[currentCardIdx].a : flashcards[currentCardIdx].q;
+    fc.style.color = showingAnswer ? '#60a5fa' : '#f8fafc';
+  }
+
+  function flipFlashcard() {
+    showingAnswer = !showingAnswer;
+    renderFlashcard();
+  }
+
+  function nextFlashcard() {
+    currentCardIdx = (currentCardIdx + 1) % flashcards.length;
+    showingAnswer = false;
+    renderFlashcard();
+  }
+
+  function prevFlashcard() {
+    currentCardIdx = (currentCardIdx - 1 + flashcards.length) % flashcards.length;
+    showingAnswer = false;
+    renderFlashcard();
+  }
+
+  // Question Banks
   const examBank = {
     journeyman: [
       {
@@ -303,7 +358,7 @@
         q: "3. What is the maximum allowable ampacity of a 3/0 AWG THWN copper conductor operating at 75°C terminal temperature rating?",
         options: ["A) 175 Amperes", "B) 200 Amperes", "C) 225 Amperes", "D) 250 Amperes"],
         ans: 1,
-        ref: "NEC Table 310.16 ($75^\circ\text{C}$ column for 3/0 CU = 200A)"
+        ref: "NEC Table 310.16 (75°C column for 3/0 CU = 200A)"
       },
       {
         q: "4. Where a grounding electrode conductor is connected to a concrete-encased electrode (Ufer ground), what is the minimum copper conductor size required?",
@@ -329,13 +384,13 @@
         q: "2. What is the maximum rating of an inverse-time circuit breaker used for branch-circuit short-circuit protection of a 3-phase squirrel cage induction motor (Code Letter G)?",
         options: ["A) 125% of FLC", "B) 150% of FLC", "C) 250% of FLC", "D) 300% of FLC"],
         ans: 2,
-        ref: "NEC Table 430.52 (Non-time delay fuse = 300%, Inverse time breaker = 250%)"
+        ref: "NEC Table 430.52 (Inverse time breaker = 250%)"
       },
       {
         q: "3. When calculating service load for a multifamily dwelling with 20 dwelling units, what demand factor applies to the appliance load (other than ranges, dryers, HVAC)?",
         options: ["A) 75%", "B) 80%", "C) 85%", "D) 100%"],
         ans: 3,
-        ref: "NEC 220.53 (Appliances: 75% demand factor where 4 or more are connected, but multifamily dwelling specific rules apply)"
+        ref: "NEC 220.53"
       },
       {
         q: "4. According to NEC 450.3(B), what is the maximum primary overcurrent protection rating for a 480V to 208Y/120V transformer rated at 75 kVA with primary current of 90A?",
@@ -347,7 +402,7 @@
         q: "5. What is the minimum size bonding jumper required for a metal water piping system in a commercial facility where the service entrance conductors are 500 kcmil copper?",
         options: ["A) 4 AWG copper", "B) 2 AWG copper", "C) 1/0 AWG copper", "D) 2/0 AWG copper"],
         ans: 2,
-        ref: "NEC Table 250.102(C)(1) (Based on 500 kcmil CU service entrance -> 1/0 AWG CU)"
+        ref: "NEC Table 250.102(C)(1)"
       }
     ]
   };
@@ -395,13 +450,16 @@
     const L = parseFloat(document.getElementById('calcVdLength').value);
     const cmil = parseFloat(document.getElementById('calcVdCmil').value);
 
-    let vd = 0;
-    if (phase === 1) {
-      vd = (2 * K * I * L) / cmil;
-    } else {
-      vd = (1.732 * K * I * L) / cmil;
-    }
-    document.getElementById('calcVdResult.innerHTML') = `Voltage Drop ($V_d$): ${vd.toFixed(2)} Volts`;
+    let vd = (phase === 1) ? (2 * K * I * L) / cmil : (1.732 * K * I * L) / cmil;
+    document.getElementById('calcVdResult').innerHTML = `Voltage Drop (Vd): ${vd.toFixed(2)} Volts`;
+  }
+
+  function calculateDerate() {
+    const base = parseFloat(document.getElementById('calcBaseAmp').value) || 0;
+    const tempF = parseFloat(document.getElementById('calcTempFactor').value) || 1;
+    const bundleF = parseFloat(document.getElementById('calcBundleFactor').value) || 1;
+    const allowable = base * tempF * bundleF;
+    document.getElementById('calcDerateResult').innerHTML = `Allowable Ampacity: ${allowable.toFixed(2)} Amperes`;
   }
 
   function calculateOhms() {
@@ -414,25 +472,12 @@
     else if (I && R && !E) E = I * R;
 
     const P = E * I;
-    document.getElementById('calcOhmsResult').innerHTML = `Voltage (E): ${E.toFixed(2)}V | Current (I): ${I.toFixed(2)}A | Resistance (R): ${R.toFixed(2)}Ω | Power (P): ${P.toFixed(2)}W`;
-  }
-
-  function calculateParallel() {
-    const r1 = parseFloat(document.getElementById('calcR1').value) || 0;
-    const r2 = parseFloat(document.getElementById('calcR2').value) || 0;
-    const r3 = parseFloat(document.getElementById('calcR3').value) || 0;
-
-    let invSum = 0;
-    if (r1 > 0) invSum += (1 / r1);
-    if (r2 > 0) invSum += (1 / r2);
-    if (r3 > 0) invSum += (1 / r3);
-
-    const rt = invSum > 0 ? (1 / invSum) : 0;
-    document.getElementById('calcParallelResult').innerHTML = `Total Resistance ($R_T$): ${rt.toFixed(2)} Ohms`;
+    document.getElementById('calcOhmsResult').innerHTML = `Voltage: ${E.toFixed(2)}V | Current: ${I.toFixed(2)}A | Resistance: ${R.toFixed(2)}Ω | Power: ${P.toFixed(2)}W`;
   }
 
   window.addEventListener('DOMContentLoaded', () => {
     renderExamQuestions();
+    renderFlashcard();
   });
 </script>
 </body>
