@@ -1383,17 +1383,32 @@
 
   // Portal Login & Allowed Users Security Logic
   
-  let portalSettings = JSON.parse(localStorage.getItem('portal_security_settings') || '{"masterPin": "0522", "allowedUsers": [{"name": "Jeremy", "pin": "0522"}]}');
+  
+  // Portal Login & Allowed Users Security Logic
+  let portalSettings = JSON.parse(localStorage.getItem('portal_security_settings') || 'null');
+  if (!portalSettings || !portalSettings.masterPin) {
+    portalSettings = { masterPin: "0522", allowedUsers: [{ name: "Jeremy", pin: "0522" }] };
+    localStorage.setItem('portal_security_settings', JSON.stringify(portalSettings));
+  }
 
   function verifyPortalLogin() {
-    const val = document.getElementById('loginPinInput').value.trim();
-    if (val === '0522' || val === portalSettings.masterPin || portalSettings.allowedUsers.some(u => u.pin === val)) {
-      document.getElementById('loginOverlay').style.display = 'none';
-      alert('🔓 Welcome! Access granted.');
+    const inputField = document.getElementById('loginPinInput');
+    const val = inputField ? inputField.value.trim() : '';
+    
+    if (val === '0522' || val === portalSettings.masterPin || (portalSettings.allowedUsers && portalSettings.allowedUsers.some(u => u.pin === val))) {
+      const overlay = document.getElementById('loginOverlay');
+      if (overlay) overlay.style.display = 'none';
+      if (typeof showToast === 'function') {
+        showToast('🔓 Welcome, Jeremy! Access granted.', 'success');
+      } else {
+        alert('🔓 Welcome! Access granted.');
+      }
     } else {
-      alert('❌ Access Denied: Invalid PIN.');
-      document.getElementById('loginPinInput').value = '';
-      document.getElementById('loginPinInput').focus();
+      alert('❌ Access Denied: Invalid PIN ("' + val + '"). Please enter 0522.');
+      if (inputField) {
+        inputField.value = '';
+        inputField.focus();
+      }
     }
   }
 
