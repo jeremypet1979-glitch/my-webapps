@@ -568,6 +568,7 @@
     <button class="nav-tab" data-view="comp" onclick="switchView('comp')">🔩 2. Component Serial Logger</button>
     <button class="nav-tab" data-view="test" onclick="switchView('test')">⚡ 3. Test Team Job Sheet (Editable)</button>
     <button class="nav-tab" data-view="jha" onclick="switchView('jha')">⚠️ 4. Daily JHA (Safety Form)</button>
+    <button class="nav-tab" data-view="punchlist" onclick="switchView('punchlist')">📋 5. Testing Punch List (QC169)</button>
   </div>
 
   <div class="main-wrap">
@@ -648,8 +649,50 @@
             <button class="amber" onclick="switchView('jha')">▶ Open JHA App</button>
           </div>
         </div>
-      </div>
+      
+        <!-- App 5: QC169 Punchlist -->
+        <div class="app-card">
+          <div>
+            <span class="app-tag" style="background:#dcfce7; color:#166534;">Quality Control</span>
+            <h3>5. Testing Punch List (QC169)</h3>
+            <p>Exact layout mirroring QC169 template with multi-page header mirroring, Excel export, and email summary.</p>
+          </div>
+          <div class="row">
+            <button class="success" onclick="switchView('punchlist')">▶ Open Punch List</button>
+          </div>
+        </div>
+</div>
       <div id="customCardsContainer" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap:18px; margin-top:18px;"></div>
+    </div>
+
+    
+    <!-- ================================================================= -->
+    <!-- VIEW 5: TESTING PUNCH LIST (QC169 TEMPLATE)                       -->
+    <!-- ================================================================= -->
+    <div id="view-punchlist" class="view-panel">
+      <div class="card">
+        <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <h2 style="margin:0;">📋 Testing Punch List (QC169 Template)</h2>
+          <div class="row">
+            <button class="success sm" onclick="addNewPunchlistPage()">➕ Add Punchlist Page (Mirrored Header)</button>
+            <button class="amber sm" onclick="exportPunchlistToExcel()">📊 Export Punch List to Excel</button>
+            <button class="purple sm" onclick="emailPunchlistSummary()">✉️ Email Completed Punch List</button>
+          </div>
+        </div>
+
+        <!-- Global Header Mirrored Across Pages -->
+        <div style="background:#f8fafc; border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:20px;">
+          <div style="font-weight:700; font-size:0.92rem; margin-bottom:10px; color:#1e293b;">Global Punchlist Header Information (Mirrored on All Pages):</div>
+          <div class="grid-3">
+            <div class="form-group"><label>Inspector:</label><input type="text" id="plInspector" placeholder="Inspector Name" oninput="syncPunchlistHeaders()"></div>
+            <div class="form-group"><label>Date:</label><input type="date" id="plDate" onchange="syncPunchlistHeaders()"></div>
+            <div class="form-group"><label>Build Supervisor:</label><input type="text" id="plSupervisor" placeholder="Supervisor Name" oninput="syncPunchlistHeaders()"></div>
+          </div>
+        </div>
+
+        <!-- Dynamic Punchlist Pages Container -->
+        <div id="punchlistPagesContainer"></div>
+      </div>
     </div>
 
     <!-- ================================================================= -->
@@ -2257,6 +2300,174 @@
     try {
       localStorage.setItem('portal_custom_cards', JSON.stringify(customAppCards));
     } catch(e) {}
+  }
+
+
+
+
+  // =========================================================================
+  // QC169 PUNCH LIST APP LOGIC
+  // =========================================================================
+  let punchlistPages = JSON.parse(localStorage.getItem('portal_punchlist_pages') || '[{"pageTitle": "Testing Punch List - Page 1", "items": [{},{},{},{},{},{},{},{},{},{}]}]');
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const d = document.getElementById('plDate');
+    if (d && !d.value) d.value = new Date().toISOString().split('T')[0];
+    renderPunchlistPages();
+  });
+
+  function syncPunchlistHeaders() {
+    savePunchlistStorage();
+  }
+
+  function addNewPunchlistPage() {
+    const pageNum = punchlistPages.length + 1;
+    punchlistPages.push({
+      pageTitle: `Testing Punch List - Page ${pageNum}`,
+      items: [{},{},{},{},{},{},{},{},{},{}]
+    });
+    renderPunchlistPages();
+    savePunchlistStorage();
+  }
+
+  function addPunchlistRow(pageIdx) {
+    punchlistPages[pageIdx].items.push({});
+    renderPunchlistPages();
+    savePunchlistStorage();
+  }
+
+  function removePunchlistRow(pageIdx, rowIdx) {
+    punchlistPages[pageIdx].items.splice(rowIdx, 1);
+    renderPunchlistPages();
+    savePunchlistStorage();
+  }
+
+  function removePunchlistPage(pageIdx) {
+    if (punchlistPages.length <= 1) {
+      alert('You must keep at least one punch list page.');
+      return;
+    }
+    if (confirm('Delete this entire punch list page?')) {
+      punchlistPages.splice(pageIdx, 1);
+      renderPunchlistPages();
+      savePunchlistStorage();
+    }
+  }
+
+  function updatePunchlistItem(pageIdx, rowIdx, field, val) {
+    punchlistPages[pageIdx].items[rowIdx][field] = val;
+    savePunchlistStorage();
+  }
+
+  function renderPunchlistPages() {
+    const container = document.getElementById('punchlistPagesContainer');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const inspector = document.getElementById('plInspector') ? document.getElementById('plInspector').value : '';
+    const date = document.getElementById('plDate') ? document.getElementById('plDate').value : '';
+    const supervisor = document.getElementById('plSupervisor') ? document.getElementById('plSupervisor').value : '';
+
+    punchlistPages.forEach((page, pageIdx) => {
+      const pageDiv = document.createElement('div');
+      pageDiv.className = 'card';
+      pageDiv.style.border = '2px solid #0f172a';
+      pageDiv.style.marginBottom = '24px';
+
+      let itemsHtml = '';
+      page.items.forEach((item, rowIdx) => {
+        itemsHtml += `
+          <tr>
+            <td style="text-align:center; font-weight:700;">${rowIdx + 1}</td>
+            <td><input class="inline-edit" value="${item.issue || ''}" onchange="updatePunchlistItem(${pageIdx}, ${rowIdx}, 'issue', this.value)" placeholder="Describe issue..."></td>
+            <td><input class="inline-edit" style="width:110px;" value="${item.correctedBy || ''}" onchange="updatePunchlistItem(${pageIdx}, ${rowIdx}, 'correctedBy', this.value)" placeholder="Initials/Name"></td>
+            <td><input class="inline-edit" type="date" value="${item.correctedDate || ''}" onchange="updatePunchlistItem(${pageIdx}, ${rowIdx}, 'correctedDate', this.value)"></td>
+            <td><input class="inline-edit" style="width:110px;" value="${item.reinspectBy || ''}" onchange="updatePunchlistItem(${pageIdx}, ${rowIdx}, 'reinspectBy', this.value)" placeholder="Initials/Name"></td>
+            <td style="text-align:center;"><button class="danger sm" onclick="removePunchlistRow(${pageIdx}, ${rowIdx})">✕</button></td>
+          </tr>
+        `;
+      });
+
+      pageDiv.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; background:#0f172a; color:#fff; padding:10px 14px; border-radius:6px; margin-bottom:14px;">
+          <strong>${page.pageTitle}</strong>
+          <div class="row">
+            <button class="outline sm" style="color:#fff; border-color:#cbd5e1;" onclick="addPunchlistRow(${pageIdx})">+ Add Row</button>
+            <button class="danger sm" onclick="removePunchlistPage(${pageIdx})">Delete Page</button>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px; margin-bottom:14px; font-size:0.9rem; background:#f1f5f9; padding:10px; border-radius:6px; color:#0f172a;">
+          <div><strong>Inspector:</strong> ${inspector || '(Not set)'}</div>
+          <div><strong>Date:</strong> ${date || '(Not set)'}</div>
+          <div><strong>Build Supervisor:</strong> ${supervisor || '(Not set)'}</div>
+        </div>
+
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:50px; text-align:center;">Item</th>
+                <th>Issue / Deficiency Description</th>
+                <th style="width:130px;">Corrected By</th>
+                <th style="width:150px;">Corrected Date</th>
+                <th style="width:130px;">Reinspect By</th>
+                <th style="width:60px; text-align:center;">Del</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itemsHtml}
+            </tbody>
+          </table>
+        </div>
+      `;
+      container.appendChild(pageDiv);
+    });
+  }
+
+  function savePunchlistStorage() {
+    try {
+      localStorage.setItem('portal_punchlist_pages', JSON.stringify(punchlistPages));
+    } catch(e) {}
+  }
+
+  function exportPunchlistToExcel() {
+    const wb = XLSX.utils.book_new();
+    const inspector = document.getElementById('plInspector').value;
+    const date = document.getElementById('plDate').value;
+    const supervisor = document.getElementById('plSupervisor').value;
+
+    punchlistPages.forEach((page, idx) => {
+      let sheetData = [
+        ["Testing Punch List"],
+        ["Inspector:", inspector, "Date:", date, "Build Supervisor:", supervisor],
+        [],
+        ["Item", "Issue / Deficiency Description", "Corrected By", "Corrected Date", "Reinspect By"]
+      ];
+
+      page.items.forEach((item, rIdx) => {
+        sheetData.push([rIdx + 1, item.issue || "", item.correctedBy || "", item.correctedDate || "", item.reinspectBy || ""]);
+      });
+
+      const ws = XLSX.utils.aoa_to_sheet(sheetData);
+      XLSX.utils.book_append_sheet(wb, ws, `Page_${idx + 1}`);
+    });
+
+    XLSX.writeFile(wb, "Testing_Punch_List_QC169.xlsx");
+  }
+
+  function emailPunchlistSummary() {
+    const inspector = document.getElementById('plInspector').value || 'N/A';
+    const date = document.getElementById('plDate').value || 'N/A';
+    const supervisor = document.getElementById('plSupervisor').value || 'N/A';
+
+    let totalIssues = 0;
+    punchlistPages.forEach(p => totalIssues += p.items.filter(i => i.issue).length);
+
+    let subject = encodeURIComponent(`Completed Testing Punch List - Date: ${date}`);
+    let body = encodeURIComponent(`Testing Punch List Summary (QC169)\n\nInspector: ${inspector}\nDate: ${date}\nBuild Supervisor: ${supervisor}\nTotal Logged Issues: ${totalIssues}\n\nPlease check the exported Excel sheet for full details.`);
+
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
   }
 
 </script>
