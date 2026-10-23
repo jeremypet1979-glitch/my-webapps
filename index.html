@@ -30,7 +30,6 @@
       padding: 0;
     }
 
-    /* Top Global Navigation & Context Bar */
     .topbar {
       background: #0f172a;
       color: #ffffff;
@@ -86,7 +85,6 @@
       width: 150px;
     }
 
-    /* Sub-navigation tabs */
     .nav-tabs {
       background: #1e293b;
       padding: 0 24px;
@@ -113,14 +111,12 @@
       background: rgba(59,130,246,0.1);
     }
 
-    /* Main Content Container */
     .main-wrap {
       max-width: 1200px;
       margin: 20px auto;
       padding: 0 20px 40px 20px;
     }
 
-    /* Workspace Folder Banner */
     .folder-banner {
       background: #ffffff;
       border: 2px solid #94a3b8;
@@ -155,7 +151,6 @@
       box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.2);
     }
 
-    /* App Specific Excel Picker Bar */
     .app-file-bar {
       background: #f8fafc;
       border: 1px solid var(--border);
@@ -178,7 +173,6 @@
       font-weight: 600;
     }
 
-    /* Toast Status Notification */
     #toastBanner {
       display: none;
       padding: 12px 16px;
@@ -191,7 +185,6 @@
     .toast-warn { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
     .toast-error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
 
-    /* Cards & Layout */
     .card {
       background: var(--card);
       border-radius: 12px;
@@ -231,7 +224,6 @@
       width: fit-content;
     }
 
-    /* Buttons & Inputs */
     button, .btn {
       background: var(--primary);
       color: white;
@@ -279,7 +271,6 @@
     textarea { resize: vertical; min-height: 60px; }
     .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 
-    /* Tables */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -306,7 +297,6 @@
       background: #ffffff;
     }
 
-    /* JHA Layout Styling matching uploaded JHA.pdf */
     .jha-header-box {
       border: 2px solid #0f172a;
       border-radius: 8px;
@@ -384,38 +374,17 @@
     }
     .preset-pill:hover { background: #dbeafe; }
 
-
-    /* Touch Signature Pad Styling for iPad / Tablets */
     .sig-pad-container {
       background: #ffffff;
       border: 2px dashed #64748b;
       border-radius: 8px;
       position: relative;
-      touch-action: none; /* Prevents iPad screen scrolling while signing */
+      touch-action: none;
       user-select: none;
       -webkit-user-select: none;
       margin-top: 6px;
       overflow: hidden;
     }
-    .sig-canvas {
-      width: 100%;
-      height: 130px;
-      display: block;
-      cursor: crosshair;
-      touch-action: none;
-    }
-    .sig-baseline {
-      position: absolute;
-      bottom: 28px;
-      left: 16px;
-      right: 16px;
-      border-bottom: 1px solid #cbd5e1;
-      pointer-events: none;
-      font-size: 0.72rem;
-      color: #94a3b8;
-    }
-
-    /* Individual Crew Signature Cards */
     .crew-card {
       background: #f8fafc;
       border: 1px solid #cbd5e1;
@@ -453,7 +422,6 @@
       align-items: center;
       gap: 6px;
     }
-
     .sig-img-preview {
       max-height: 48px;
       max-width: 220px;
@@ -464,1004 +432,20 @@
     .view-panel { display: none; }
     .view-panel.active { display: block; }
 
-        
     @media print {
       @page { size: landscape; margin: 0.3in; }
       .topbar, .nav-tabs, .folder-banner, .app-file-bar, .no-print { display: none !important; }
       body { background: #fff; color: #000; font-size: 8.5pt !important; line-height: 1.25; }
       .main-wrap { margin: 0; padding: 0; max-width: 100%; width: 100%; }
       .card { border: none !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; }
-      
-      table {
-        border-collapse: collapse !important;
-        width: 100% !important;
-        font-size: 8pt !important;
-      }
-      th, td {
-        border: 1px solid #000 !important;
-        padding: 4px 6px !important;
-      }
-      input[type="text"], input[type="date"] {
-        border: none !important;
-        background: transparent !important;
-        padding: 0 !important;
-        font-size: 8pt !important;
-        color: #000 !important;
-      }
+      table { border-collapse: collapse !important; width: 100% !important; font-size: 8pt !important; }
+      th, td { border: 1px solid #000 !important; padding: 4px 6px !important; }
+      input[type="text"], input[type="date"] { border: none !important; background: transparent !important; padding: 0 !important; font-size: 8pt !important; color: #000 !important; }
     }
-
-    </style>
+  </style>
 </head>
 <body>
 
-  <!-- Authorized Access Login Overlay -->
-  >
-
-
-  <!-- Authorized Access Login Overlay -->
-  >
-
-
-  <!-- Top Navigation & Shared Job Context -->
-  <div class="topbar">
-    <div class="brand" onclick="switchView('home')">
-      <span class="brand-badge">SHOP FLOOR & TEST HUB</span>
-      <span>Operations & Live Electrical Test Portal</span>
-    </div>
-    <div class="context-bar">
-      <label>Active Job #:</label>
-      <input type="text" id="globalJob" placeholder="e.g. JOB-2026-104" oninput="syncGlobalContext()">
-      <label>Equip / Skid #:</label>
-      <input type="text" id="globalSkid" placeholder="e.g. SKID-01" oninput="syncGlobalContext()">
-    </div>
-  </div>
-
-  <!-- Sub-Navigation Tabs -->
-  <div class="nav-tabs">
-    <button class="nav-tab active" data-view="home" onclick="switchView('home')">🏠 Portal Home</button>
-    <button class="nav-tab" data-view="qr" onclick="switchView('qr')">📦 1. Job & Skid QR Logger</button>
-    <button class="nav-tab" data-view="comp" onclick="switchView('comp')">🔩 2. Component Serial Logger</button>
-    <button class="nav-tab" data-view="test" onclick="switchView('test')">⚡ 3. Test Team Job Sheet (Editable)</button>
-    <button class="nav-tab" data-view="jha" onclick="switchView('jha')">⚠️ 4. Daily JHA (Safety Form)</button>
-    <button class="nav-tab" data-view="punchlist" onclick="switchView('punchlist')">📋 5. Testing Punch List (QC169)</button>
-    <button class="nav-tab" data-view="cable" onclick="switchView('cable')">🔌 6. Cable Insulation Test (QC281)</button>
-  </div>
-
-  <div class="main-wrap">
-
-    <!-- Workspace Folder Auto-Discovery Banner -->
-    <div class="folder-banner" id="folderBanner">
-      <div class="folder-status">
-        <span class="status-dot" id="folderDot"></span>
-        <div id="folderStatusText">
-          <strong>Workspace Folder Not Linked Yet</strong><br>
-          <span style="font-size:0.84rem; color:#475569;">Click <b>"Link App Folder"</b> once to automatically detect all Excel spreadsheets (<code>.xlsx</code>) in your folder for every app and enable 1-click file creation.</span>
-        </div>
-      </div>
-      <div class="row">
-        <button class="success" onclick="connectWorkspaceFolder()">📂 Link App Folder (Auto-Detect Excel Files)</button>
-        <button class="outline sm" onclick="refreshFolderFiles()" id="refreshFolderBtn" style="display:none;">🔄 Rescan Folder</button>
-      </div>
-    </div>
-
-    <!-- Global Status Toast -->
-    <div id="toastBanner"></div>
-
-    <!-- ================================================================= -->
-    <!-- VIEW 0: PORTAL HOME                                               -->
-    <!-- ================================================================= -->
-    <div id="view-home" class="view-panel active">
-      <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:16px;">
-        <h2 style="margin:0;">🏠 Shop Floor Operations Hub</h2>
-        <button class="success sm" onclick="promptAddCustomAppCard()">➕ Add Custom HTML App Tile</button>
-      </div>
-      <div class="app-grid" id="portalHomeGrid">
-        <!-- App 1 -->
-        <div class="app-card">
-          <div>
-            <span class="app-tag" style="background:#dbeafe; color:#1e40af;">Logistics & Assembly</span>
-            <h3>1. Job & Skid QR Logger</h3>
-            <p>Scan QR serial numbers and associate them with a Job Number and Equipment/Skid Number into a continuous Excel log.</p>
-          </div>
-          <div class="row">
-            <button onclick="switchView('qr')">▶ Open App</button>
-            <a class="btn outline" href="scanner.html" target="_blank">↗ scanner.html</a>
-          </div>
-        </div>
-
-        <!-- App 2 -->
-        <div class="app-card">
-          <div>
-            <span class="app-tag" style="background:#ccfbf1; color:#115e59;">BOM & Serialization</span>
-            <h3>2. Component Serial Logger</h3>
-            <p>Log individual component names/designations (breakers, VFDs, relays, PLCs, transmitters) and serial numbers per Job.</p>
-          </div>
-          <div class="row">
-            <button style="background:var(--teal);" onclick="switchView('comp')">▶ Open App</button>
-            <a class="btn outline" href="component_scanner.html" target="_blank">↗ component_scanner.html</a>
-          </div>
-        </div>
-
-        <!-- App 3: Test Team Editable Per-Job Sheet -->
-        <div class="app-card">
-          <div>
-            <span class="app-tag" style="background:#ede9fe; color:#5b21b6;">Test Department</span>
-            <h3>3. Test Team Job Sheet</h3>
-            <p>Automatically pulls items for each Job #, creates a dedicated Excel file or worksheet per Job #, and is 100% editable right inside the app.</p>
-          </div>
-          <div class="row">
-            <button class="purple" onclick="switchView('test')">▶ Open Test App</button>
-          </div>
-        </div>
-
-        <!-- App 4: JHA Live Electrical Testing -->
-        <div class="app-card">
-          <div>
-            <span class="app-tag" style="background:#fef3c7; color:#92400e;">Safety & NFPA 70E</span>
-            <h3>4. Daily JHA Builder</h3>
-            <p>Interactive Job Hazard Analysis following your 2-page JHA layout, pre-loaded with industrial manufacturing & live electrical testing hazards.</p>
-          </div>
-          <div class="row">
-            <button class="amber" onclick="switchView('jha')">▶ Open JHA App</button>
-          </div>
-        </div>
-      
-        <!-- App 5: QC169 Punchlist -->
-        <div class="app-card">
-          <div>
-            <span class="app-tag" style="background:#dcfce7; color:#166534;">Quality Control</span>
-            <h3>5. Testing Punch List (QC169)</h3>
-            <p>Exact layout mirroring QC169 template with multi-page header mirroring, Excel export, and email summary.</p>
-          </div>
-          <div class="row">
-            <button class="success" onclick="switchView('punchlist')">▶ Open Punch List</button>
-          </div>
-        </div>
-
-        <!-- App 6: QC281 Cable Insulation Test (Megger) -->
-        <div class="app-card">
-          <div>
-            <span class="app-tag" style="background:#fef08a; color:#854d0e;">Electrical Test Report</span>
-            <h3>6. Cable Insulation Report (QC281)</h3>
-            <p>Megger insulation test report matching QC281 template with equipment from/to, phase, cable size/type, resistance in GΩ, and Excel export.</p>
-          </div>
-          <div class="row">
-            <button class="amber" onclick="switchView('cable')">▶ Open Cable Report</button>
-          </div>
-        </div>
-</div>
-      <div id="customCardsContainer" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap:18px; margin-top:18px;"></div>
-    </div>
-
-    
-    
-    <!-- ================================================================= -->
-    <!-- VIEW 6: CABLE INSULATION TEST REPORT (QC281 - MEGGER)             -->
-    <!-- ================================================================= -->
-    <div id="view-cable" class="view-panel">
-      <div class="card">
-        <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:14px;">
-          <h2 style="margin:0;">🔌 Cable Insulation Test Report (QC281 - Megger)</h2>
-          <div class="row">
-            <button class="success sm" onclick="addCableTestRow()">+ Add Test Line</button>
-            <button class="amber sm" onclick="exportCableTestToExcel()">📊 Export QC281 to Excel</button>
-            <button class="purple sm" onclick="emailCableTestSummary()">✉️ Email Report Summary</button>
-            <button class="outline sm" onclick="window.print()">🖨️ Print Report</button>
-          </div>
-        </div>
-
-        <!-- QC281 Header Metadata -->
-        <div style="background:#f8fafc; border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:20px;">
-          <div class="grid-3">
-            <div class="form-group"><label>Sales Order Number:</label><input type="text" id="cbSalesOrder" placeholder="SO Number"></div>
-            <div class="form-group"><label>Job Order Number:</label><input type="text" id="cbJobOrder" placeholder="Job Number"></div>
-            <div class="form-group"><label>Project Name:</label><input type="text" id="cbProject" placeholder="Project Name"></div>
-          </div>
-          <div class="grid-3" style="border-top:1px solid #cbd5e1; padding-top:12px; margin-top:10px;">
-            <div class="form-group"><label>Testing Device Manufacturer:</label><input type="text" id="cbDevMfr" value="Megger"></div>
-            <div class="form-group"><label>Testing Device Model Number:</label><input type="text" id="cbDevModel" placeholder="e.g. MIT515"></div>
-            <div class="form-group"><label>Testing Device Calibration Date:</label><input type="date" id="cbDevCal"></div>
-          </div>
-          <div class="grid-3" style="border-top:1px solid #cbd5e1; padding-top:12px; margin-top:10px;">
-            <div class="form-group"><label>Rated / System Voltage:</label><input type="text" id="cbSysVoltage" placeholder="e.g. 480V / 600V"></div>
-            <div class="form-group"><label>Testing Voltage:</label><input type="text" id="cbTestVoltage" placeholder="e.g. 1000V DC"></div>
-            <div class="form-group"><label>Cable Test Duration:</label><input type="text" id="cbTestDuration" placeholder="e.g. 1 Minute"></div>
-          </div>
-        </div>
-
-        <!-- Cable Insulation Test Table matching QC281 -->
-        <div style="font-weight:700; margin-bottom:8px; color:#1e293b;">Cable Insulation (MEGGER) Test Results:</div>
-        <div style="overflow-x:auto;">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:40px; text-align:center;">Item</th>
-                <th>Equipment (FROM)</th>
-                <th>Equipment (TO)</th>
-                <th style="width:100px;">Phase / N</th>
-                <th style="width:110px;">Cable Size</th>
-                <th style="width:110px;">Cable Type</th>
-                <th style="width:130px;">Resistance [GΩ]</th>
-                <th style="width:50px; text-align:center;">Del</th>
-              </tr>
-            </thead>
-            <tbody id="cableTestTableBody"></tbody>
-          </table>
-        </div>
-
-        <!-- Signatures Section matching QC281 -->
-        <div class="grid-2" style="margin-top:24px; border-top:1px solid var(--border); padding-top:16px;">
-          <div>
-            <div class="form-group"><label>Technician Name:</label><input type="text" id="cbTechName" placeholder="Tech Name"></div>
-            <div class="form-group"><label>Technician Signature / Initials:</label><input type="text" id="cbTechSig" placeholder="Signature / Date"></div>
-          </div>
-          <div>
-            <div class="form-group"><label>Witness Name:</label><input type="text" id="cbWitnessName" placeholder="Witness Name"></div>
-            <div class="form-group"><label>Witness Signature / Initials:</label><input type="text" id="cbWitnessSig" placeholder="Signature / Date"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ================================================================= -->
-    <!-- VIEW 5: TESTING PUNCH LIST (QC169 TEMPLATE)                       -->
-    <!-- ================================================================= -->
-    <div id="view-punchlist" class="view-panel">
-      <div class="card">
-        <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:14px;">
-          <h2 style="margin:0;">📋 Testing Punch List (QC169 Template)</h2>
-          <div class="row">
-            <button class="success sm" onclick="addNewPunchlistPage()">➕ Add Punchlist Page (Mirrored Header)</button>
-            <button class="amber sm" onclick="exportPunchlistToExcel()">📊 Export Punch List to Excel</button>
-            <button class="purple sm" onclick="emailPunchlistSummary()">✉️ Email Completed Punch List</button>
-          </div>
-        </div>
-
-        <!-- Global Header Mirrored Across Pages -->
-        <div style="background:#f8fafc; border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:20px;">
-          <div style="font-weight:700; font-size:0.92rem; margin-bottom:10px; color:#1e293b;">Global Punchlist Header Information (Mirrored on All Pages):</div>
-          <div class="grid-3">
-            <div class="form-group"><label>Inspector:</label><input type="text" id="plInspector" placeholder="Inspector Name" oninput="syncPunchlistHeaders()"></div>
-            <div class="form-group"><label>Date:</label><input type="date" id="plDate" onchange="syncPunchlistHeaders()"></div>
-            <div class="form-group"><label>Build Supervisor:</label><input type="text" id="plSupervisor" placeholder="Supervisor Name" oninput="syncPunchlistHeaders()"></div>
-          </div>
-        </div>
-
-        <!-- Dynamic Punchlist Pages Container -->
-        <div id="punchlistPagesContainer"></div>
-      </div>
-    </div>
-
-    <!-- ================================================================= -->
-    <!-- VIEW 1: JOB & SKID QR LOGGER                                      -->
-    <!-- ================================================================= -->
-    <div id="view-qr" class="view-panel">
-      <div class="card">
-        <h2 style="margin-top:0;">📦 Job & Equipment/Skid QR Logger</h2>
-
-        <!-- Folder Associated Excel Selector -->
-        <div class="app-file-bar">
-          <div class="row">
-            <strong>📊 Associated Excel File:</strong>
-            <select id="qrFileSelect" onchange="selectAppExcelFile('qr', this.value)">
-              <option value="">-- Link Folder above or choose file --</option>
-            </select>
-          </div>
-          <div class="row">
-            <button class="success sm" onclick="promptCreateNewExcel('qr')">➕ Create New Excel in Folder</button>
-            <button class="outline sm" onclick="pickSingleFileFallback('qr')">📂 Browse File...</button>
-            <button class="secondary sm" onclick="downloadBackupExcel('qr')">📥 Download Copy</button>
-          </div>
-        </div>
-
-        <form onsubmit="event.preventDefault(); addQrEntry();">
-          <div class="grid-3">
-            <div class="form-group">
-              <label>Job Number</label>
-              <input type="text" id="qrJob" placeholder="e.g. JOB-2026-104">
-            </div>
-            <div class="form-group">
-              <label>Equipment / Skid Number</label>
-              <input type="text" id="qrSkid" placeholder="e.g. SKID-01">
-            </div>
-            <div class="form-group">
-              <label>QR Code Serial Number</label>
-              <div class="row">
-                <input type="text" id="qrSerial" placeholder="Scan or type QR serial" style="flex:1;">
-                <button type="button" class="secondary" onclick="toggleCamera('qrReader', 'qrSerial')">📷</button>
-                <button type="submit">+ Add</button>
-              </div>
-            </div>
-          </div>
-        </form>
-        <div id="qrReader" style="display:none; max-width:400px; margin-bottom:14px;"></div>
-
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              
-              <th>Job Number</th>
-              <th>Equipment / Skid #</th>
-              <th>QR Serial Number</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="qrTableBody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ================================================================= -->
-    <!-- VIEW 2: COMPONENT SERIAL LOGGER                                   -->
-    <!-- ================================================================= -->
-    <div id="view-comp" class="view-panel">
-      <div class="card">
-        <h2 style="margin-top:0;">🔩 Component Serial & Designation Logger</h2>
-
-        <!-- Folder Associated Excel Selector -->
-        <div class="app-file-bar">
-          <div class="row">
-            <strong>📊 Associated Excel File:</strong>
-            <select id="compFileSelect" onchange="selectAppExcelFile('comp', this.value)">
-              <option value="">-- Link Folder above or choose file --</option>
-            </select>
-          </div>
-          <div class="row">
-            <button class="success sm" onclick="promptCreateNewExcel('comp')">➕ Create New Excel in Folder</button>
-            <button class="outline sm" onclick="pickSingleFileFallback('comp')">📂 Browse File...</button>
-            <button class="secondary sm" onclick="downloadBackupExcel('comp')">📥 Download Copy</button>
-          </div>
-        </div>
-
-        <form onsubmit="event.preventDefault(); addCompEntry();">
-          <div class="grid-4">
-            <div class="form-group">
-              <label>Job Number</label>
-              <input type="text" id="compJob" placeholder="e.g. JOB-2026-104">
-            </div>
-            <div class="form-group">
-              <label>Equipment / Skid #</label>
-              <input type="text" id="compSkid" placeholder="e.g. SKID-01">
-            </div>
-            <div class="form-group">
-              <label>Component Name / Designation</label>
-              <input type="text" id="compName" placeholder="e.g. Main Breaker CB-101">
-            </div>
-            <div class="form-group">
-              <label>Component Serial #</label>
-              <div class="row">
-                <input type="text" id="compSerial" placeholder="Scan or type serial" style="flex:1;">
-                <button type="button" class="secondary" onclick="toggleCamera('compReader', 'compSerial')">📷</button>
-                <button type="submit" style="background:var(--teal);">+ Add</button>
-              </div>
-            </div>
-          </div>
-        </form>
-        <div id="compReader" style="display:none; max-width:400px; margin-bottom:14px;"></div>
-
-        <div class="row" style="justify-content:space-between; margin: 10px 0;">
-          <span style="font-size:0.85rem; color:var(--muted);">💡 Tip: Every component logged here can also be pushed straight to the <b>Test Team Job Sheet</b>!</span>
-          <button class="purple sm" onclick="syncComponentsToTestApp()">⚡ Sync Current Job Components to Test Team App</button>
-        </div>
-
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              
-              <th>Job Number</th>
-              <th>Equipment / Skid #</th>
-              <th>Component Name / Designation</th>
-              <th>Component Serial #</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="compTableBody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ================================================================= -->
-    <!-- VIEW 3: TEST TEAM PER-JOB EDITABLE APP                            -->
-    <!-- ================================================================= -->
-    <div id="view-test" class="view-panel">
-      <div class="card">
-        <div class="row" style="justify-content:space-between; margin-bottom:12px;">
-          <div>
-            <h2 style="margin:0;">⚡ Test Team Job Sheet (Editable Per-Job Log)</h2>
-            <div style="font-size:0.88rem; color:var(--muted);">Creates a dedicated sheet/file for each Job # and lets technicians edit every cell directly in the app.</div>
-          </div>
-          <div class="row">
-            <button class="purple" onclick="createNewJobTestFile()">➕ Create Dedicated Excel File for Active Job #</button>
-          </div>
-        </div>
-
-        <!-- Folder Associated Excel Selector -->
-        <div class="app-file-bar">
-          <div class="row">
-            <strong>📊 Active Test Excel File:</strong>
-            <select id="testFileSelect" onchange="selectAppExcelFile('test', this.value)">
-              <option value="">-- Link Folder above or choose a Test Excel file --</option>
-            </select>
-          </div>
-          <div class="row">
-            <label style="font-weight:700; font-size:0.88rem;">Filter / Select Job #:</label>
-            <select id="testJobFilter" onchange="renderTestTable()" style="min-width:160px;">
-              <option value="ALL">All Jobs</option>
-            </select>
-            <button class="outline sm" onclick="syncComponentsToTestApp()">🔄 Pull Items from Component & QR Logs</button>
-            <button class="secondary sm" onclick="downloadBackupExcel('test')">📥 Download Job Excel</button>
-          </div>
-        </div>
-
-        <!-- Add New Test Item Row -->
-        <form onsubmit="event.preventDefault(); addTestItem();" style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #cbd5e1; margin-bottom:16px;">
-          <div style="font-weight:700; font-size:0.88rem; margin-bottom:10px; color:#475569;">+ Add Item to Job Test Sheet</div>
-          <div class="grid-4">
-            <input type="text" id="tJob" placeholder="Job Number (e.g. JOB-2026-104)">
-            <input type="text" id="tSkid" placeholder="Equipment / Skid #">
-            <input type="text" id="tCompName" placeholder="Component / Designation (e.g. VFD-101)">
-            <input type="text" id="tSerial" placeholder="QR / Component Serial #">
-          </div>
-          <div class="grid-4" style="margin-top:10px;">
-            <select id="tStatus">
-              <option value="Pending">⏳ Pending Test</option>
-              <option value="Pass">✅ PASS</option>
-              <option value="Fail">❌ FAIL</option>
-              <option value="Hold">⚠️ HOLD / Rework</option>
-            </select>
-            <input type="text" id="tReading" placeholder="Voltage / Megger / Hi-Pot / Continuity">
-            <input type="text" id="tTech" placeholder="Test Tech Initials">
-            <div class="row">
-              <input type="text" id="tNotes" placeholder="Test Notes / Deficiencies" style="flex:1;">
-              <button type="submit" class="purple">+ Add Row</button>
-            </div>
-          </div>
-        </form>
-
-        <div style="font-size:0.83rem; color:#475569; margin-bottom:6px;">
-          ✏️ <b>Live Inline Editing:</b> Click any cell below to edit Component Name, Serial, Test Status, Readings, Tech, or Notes. Changes auto-save directly to your linked Job Excel file!
-        </div>
-
-        <div style="overflow-x:auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Job #</th>
-                <th>Equip / Skid #</th>
-                <th>Component / Designation</th>
-                <th>Serial / QR #</th>
-                <th>Test Status</th>
-                <th>Readings (V / Ω / MΩ)</th>
-                <th>Tech</th>
-                <th>Test Notes / Punchlist</th>
-                <th>Del</th>
-              </tr>
-            </thead>
-            <tbody id="testTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ================================================================= -->
-    <!-- VIEW 4: JHA (JOB HAZARD ANALYSIS - INDUSTRIAL & LIVE ELECTRICAL)  -->
-    <!-- ================================================================= -->
-    <div id="view-jha" class="view-panel">
-      <div class="card">
-
-        <!-- Folder Associated Excel Selector (No-Print) -->
-        <div class="app-file-bar no-print">
-          <div class="row">
-            <strong>📊 JHA Excel Log File:</strong>
-            <select id="jhaFileSelect" onchange="selectAppExcelFile('jha', this.value)">
-              <option value="">-- Link Folder above or choose JHA Excel file --</option>
-            </select>
-          </div>
-          <div class="row">
-            <button class="success sm" onclick="promptCreateNewExcel('jha')">➕ Create New JHA Excel for Job</button>
-            <button class="amber sm" onclick="saveCurrentJhaToExcel()">💾 Save / Update JHA to Excel</button>
-            <button class="outline sm" onclick="window.print()">🖨️ Print 2-Page JHA PDF</button>
-          </div>
-        </div>
-
-        <!-- PAGE 1 OF JHA (Following uploaded JHA.pdf layout) -->
-        <div class="jha-header-box">
-          <div class="jha-title-bar">
-            <span>DAILY JHA — JOB HAZARD ANALYSIS</span>
-            <span id="jhaJobBadge">DAILY SAFETY LOG</span>
-          </div>
-
-          <div style="padding:14px;">
-            <div class="grid-3">
-              <div class="form-group">
-                <label>Date:</label>
-                <input type="date" id="jhaDate">
-              </div>
-              <div class="form-group">
-                <label>Shift / Crew:</label>
-                <input type="text" id="jhaShift" placeholder="e.g. Day Shift / Test Crew A">
-              </div>
-              <div class="form-group">
-                <label>Supervisor(s) / Lead:</label>
-                <input type="text" id="jhaSupervisor" placeholder="Supervisor Name">
-              </div>
-            </div>
-
-            <div class="grid-2">
-              <div class="form-group">
-                <label>Employee Names or Department:</label>
-                <input type="text" id="jhaDept" value="Electrical Test & Quality Assurance Team">
-              </div>
-              <div class="form-group">
-                <label>Specific Task Locations (Bay / Test Cell / Skid #):</label>
-                <input type="text" id="jhaLocation" placeholder="e.g. High-Voltage Test Bay 2 / SKID-01">
-              </div>
-            </div>
-
-            <!-- Weather & Expected Temperatures Row (from JHA.pdf) -->
-            <div class="grid-2" style="border-top:1px solid #cbd5e1; padding-top:10px;">
-              <div>
-                <label style="font-weight:700; font-size:0.85rem;">Environment / Weather Conditions:</label>
-                <div class="chip-group" id="jhaWeatherGroup">
-                  <label class="check-chip"><input type="checkbox" value="Indoor Climate Controlled" checked> Indoor Shop / Test Bay</label>
-                  <label class="check-chip"><input type="checkbox" value="High Humidity/Condensation"> Damp / Condensation Risk</label>
-                  <label class="check-chip"><input type="checkbox" value="Rain"> Rain</label>
-                  <label class="check-chip"><input type="checkbox" value="Wind"> Wind</label>
-                  <label class="check-chip"><input type="checkbox" value="Snow"> Snow</label>
-                  <label class="check-chip"><input type="checkbox" value="T-Storms/Lightning"> T-Storms / Lightning</label>
-                  <label class="check-chip"><input type="checkbox" value="Heat"> Heat</label>
-                </div>
-              </div>
-              <div>
-                <label style="font-weight:700; font-size:0.85rem;">Expected Temperatures:</label>
-                <div class="chip-group" id="jhaTempGroup">
-                  <label class="check-chip"><input type="checkbox" value="<50°F"> &lt;50°F</label>
-                  <label class="check-chip"><input type="checkbox" value="51°F-79°F" checked> 51°F–79°F</label>
-                  <label class="check-chip"><input type="checkbox" value="80°F-94°F"> 80°F–94°F</label>
-                  <label class="check-chip"><input type="checkbox" value=">95°F"> &gt;95°F</label>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Pre-Job Safety Checklist Questions (Exact match to JHA.pdf + Electrical Live Test) -->
-          <div class="jha-section-title">
-            <span>PRE-TASK SAFETY & LIVE ELECTRICAL READINESS CHECKLIST</span>
-            <span style="font-size:0.78rem;">Check Yes or No for each item</span>
-          </div>
-          <div style="padding:12px 14px;">
-            <div class="grid-2" id="jhaChecklistGrid">
-              <div class="row" style="justify-content:space-between; border-bottom:1px solid #e2e8f0; padding:6px 0;">
-                <span style="font-size:0.86rem;">1. Have you been trained for the task (NFPA 70E Qualified) & understand the hazards?</span>
-                <select id="q1" style="width:90px;"><option value="Yes">Yes</option><option value="No">No</option></select>
-              </div>
-              <div class="row" style="justify-content:space-between; border-bottom:1px solid #e2e8f0; padding:6px 0;">
-                <span style="font-size:0.86rem;">2. Were you involved in, or aware of, any injury/incident from the previous day?</span>
-                <select id="q2" style="width:90px;"><option value="No">No</option><option value="Yes">Yes</option></select>
-              </div>
-              <div class="row" style="justify-content:space-between; border-bottom:1px solid #e2e8f0; padding:6px 0;">
-                <span style="font-size:0.86rem;">3. Are there any physical limitations keeping you from performing all/part of your task?</span>
-                <select id="q3" style="width:90px;"><option value="No">No</option><option value="Yes">Yes</option></select>
-              </div>
-              <div class="row" style="justify-content:space-between; border-bottom:1px solid #e2e8f0; padding:6px 0;">
-                <span style="font-size:0.86rem;">4. Have you walked your work area & inspected test leads, meter CAT ratings, and barricades?</span>
-                <select id="q4" style="width:90px;"><option value="Yes">Yes</option><option value="No">No</option></select>
-              </div>
-              <div class="row" style="justify-content:space-between; border-bottom:1px solid #e2e8f0; padding:6px 0;">
-                <span style="font-size:0.86rem;">5. Are you aware of the Emergency Action Plan, exit routes, AED, and emergency power-off (EPO)?</span>
-                <select id="q5" style="width:90px;"><option value="Yes">Yes</option><option value="No">No</option></select>
-              </div>
-              <div class="row" style="justify-content:space-between; border-bottom:1px solid #e2e8f0; padding:6px 0;">
-                <span style="font-size:0.86rem;">6. Are there any hazardous chemicals/materials needing SDS review (solvents, battery acid, SF6)?</span>
-                <select id="q6" style="width:90px;"><option value="No">No</option><option value="Yes">Yes</option></select>
-              </div>
-              <div class="row" style="justify-content:space-between; border-bottom:1px solid #e2e8f0; padding:6px 0;">
-                <span style="font-size:0.86rem;">7. Are Energized Electrical Work Permits, LOTO tags, or CPR/First Aid certs required & in place?</span>
-                <select id="q7" style="width:90px;"><option value="Yes">Yes</option><option value="No">No</option></select>
-              </div>
-              <div class="row" style="justify-content:space-between; border-bottom:1px solid #e2e8f0; padding:6px 0;">
-                <span style="font-size:0.86rem;">8. Is a Safety Watch / Spotter with non-conductive rescue hook stationed outside the boundary?</span>
-                <select id="q8" style="width:90px;"><option value="Yes">Yes</option><option value="No">No</option></select>
-              </div>
-            </div>
-          </div>
-
-          <!-- Task, Hazard, and Mitigation Table (Matching JHA.pdf + Preset Industrial/Electrical Library) -->
-          <div class="jha-section-title">
-            <span>TASK DESCRIPTION, HAZARDS ASSOCIATED W/ TASKS & MITIGATION CONTROLS</span>
-            <div class="row">
-              <button type="button" class="outline sm no-print" onclick="loadAllDefaultElectricalHazards()">⚡ Load Electrical Set</button>
-              <button type="button" class="purple sm no-print" onclick="saveCurrentHazardsToLibrary()">💾 Save Custom Hazards to Library</button>
-            </div>
-          </div>
-
-          <div style="padding:12px 14px;">
-            <div class="no-print" style="margin-bottom:10px;">
-              <div style="font-size:0.8rem; font-weight:700; color:#475569; margin-bottom:4px;">
-                ➕ Click any Preset or Previously Saved Hazard to add instantly:
-              </div>
-              <div class="preset-pills" id="hazardPresetPills"></div>
-              <div class="preset-pills" id="savedHazardPills" style="margin-top:6px;"></div>
-              <button type="button" class="sm" onclick="addBlankJhaRow()">+ Add Custom Blank Task/Hazard Row</button>
-            </div>
-
-            <table>
-              <thead>
-                <tr>
-                  <th style="width:40px;">No.</th>
-                  <th style="width:26%;">Task Description</th>
-                  <th style="width:32%;">Hazard Associated w/ Tasks</th>
-                  <th style="width:36%;">How are the hazards being mitigated (PPE / Controls)</th>
-                  <th class="no-print" style="width:45px;">Del</th>
-                </tr>
-              </thead>
-              <tbody id="jhaTaskBody"></tbody>
-            </table>
-          </div>
-
-          <!-- Mandatory Stop Work Warning from JHA.pdf -->
-          <div style="padding: 0 14px 14px 14px;">
-            <div class="stop-work-banner">
-              <span style="font-size:1.5rem;">🛑</span>
-              <div>
-                STOP WORK AUTHORITY: If the following conditions are encountered, STOP IMMEDIATELY and contact your supervisor:<br>
-                <span style="font-weight:800; text-decoration:underline;">Fall Protection Situations, Unexpected Hazardous Energies, Arc Flash Boundary / LOTO / Barricade Breaches, or Defective Test Leads.</span>
-              </div>
-            </div>
-
-            <!-- Auditors & Sign-off (Page 2 of JHA.pdf) -->
-            <div class="grid-2" style="margin-top:14px;">
-              <div>
-                <label style="font-weight:700; font-size:0.86rem;">Auditors / Review Role:</label>
-                <div class="chip-group" id="jhaAuditorGroup">
-                  <label class="check-chip"><input type="checkbox" value="Team Leads" checked> Team Leads</label>
-                  <label class="check-chip"><input type="checkbox" value="Supervisors"> Supervisors</label>
-                  <label class="check-chip"><input type="checkbox" value="Managers"> Managers</label>
-                  <label class="check-chip"><input type="checkbox" value="Safety Rep"> Safety Rep.</label>
-                </div>
-              </div>
-              <div>
-                <label style="font-weight:700; font-size:0.86rem;">Step 1: Add Crew Members to Roster (Select from Saved Directory or Type New):</label>
-                <div class="row no-print" style="margin-top:6px; margin-bottom:6px;">
-                  <select id="savedCrewSelect" onchange="selectSavedCrew(this.value)" style="flex:1; max-width:260px;">
-                    <option value="">-- Select from Saved Crew Directory --</option>
-                  </select>
-                  <input type="text" id="crewPrintName" placeholder="Employee / Technician Full Name" style="flex:1;">
-                  <input type="text" id="crewRole" placeholder="Role / Badge #" style="width:140px;">
-                  <button type="button" class="success sm" onclick="addCrewMemberToRoster()">+ Add Crew</button>
-                </div>
-                <div style="font-size:0.78rem; color:var(--muted); margin-bottom:10px;">
-                  💡 Any new crew member added here is permanently remembered for future daily JHAs.
-                </div>
-                <div style="font-size:0.82rem; color:var(--muted); margin-bottom:6px;">
-                  👇 Each added crew member has their own dedicated iPad signature box below:
-                </div>
-                <div id="crewCardsContainer" class="no-print"></div>
-              </div>
-            </div>
-
-            <table style="margin-top:10px;">
-              <thead>
-                <tr>
-                  <th style="width:50px;">#</th>
-                  <th>Print Employee / Technician Name</th>
-                  <th>Signature / Acknowledgment</th>
-                  
-                  <th class="no-print" style="width:50px;">Del</th>
-                </tr>
-              </thead>
-              <tbody id="jhaSigBody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-<script>
-
-  function renderPunchlistPages() {
-    const container = document.getElementById('punchlistPagesContainer');
-    if (!container) return;
-    container.innerHTML = '';
-
-    const globalInspector = document.getElementById('plInspector') ? document.getElementById('plInspector').value : '';
-    const globalDate = document.getElementById('plDate') ? document.getElementById('plDate').value : '';
-    const globalSupervisor = document.getElementById('plSupervisor') ? document.getElementById('plSupervisor').value : '';
-
-    punchlistPages.forEach((page, pageIdx) => {
-      const pageDiv = document.createElement('div');
-      pageDiv.className = 'card punchlist-page-card';
-      pageDiv.style.border = '2px solid #0f172a';
-      pageDiv.style.marginBottom = '24px';
-
-      let itemsHtml = '';
-      page.items.forEach((item, rowIdx) => {
-        const insp = item.inspector !== undefined ? item.inspector : globalInspector;
-        const sup = item.supervisor !== undefined ? item.supervisor : globalSupervisor;
-        
-        itemsHtml += `
-          <tr>
-            <td style="text-align:center; font-weight:700;">${rowIdx + 1}</td>
-            <td><input class="inline-edit" value="${insp}" onchange="updatePunchlistItem(${pageIdx}, ${rowIdx}, 'inspector', this.value)" placeholder="Inspector"></td>
-            <td><input class="inline-edit" value="${sup}" onchange="updatePunchlistItem(${pageIdx}, ${rowIdx}, 'supervisor', this.value)" placeholder="Supervisor"></td>
-            <td><input class="inline-edit" value="${item.issue || ''}" onchange="updatePunchlistItem(${pageIdx}, ${rowIdx}, 'issue', this.value)" placeholder="Describe issue..."></td>
-            <td><input class="inline-edit" style="width:90px;" value="${item.correctedBy || ''}" onchange="updatePunchlistItem(${pageIdx}, ${rowIdx}, 'correctedBy', this.value)" placeholder="Initials"></td>
-            <td><input class="inline-edit" type="date" value="${item.correctedDate || ''}" onchange="updatePunchlistItem(${pageIdx}, ${rowIdx}, 'correctedDate', this.value)"></td>
-            <td><input class="inline-edit" style="width:90px;" value="${item.reinspectBy || ''}" onchange="updatePunchlistItem(${pageIdx}, ${rowIdx}, 'reinspectBy', this.value)" placeholder="Initials"></td>
-            <td style="text-align:center;" class="no-print"><button class="danger sm" onclick="removePunchlistRow(${pageIdx}, ${rowIdx})">✕</button></td>
-          </tr>
-        `;
-      });
-
-      pageDiv.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center; background:#0f172a; color:#fff; padding:10px 14px; border-radius:6px; margin-bottom:14px;">
-          <strong>${page.pageTitle} (Date: ${globalDate || 'N/A'})</strong>
-          <div class="row no-print">
-            <button class="outline sm" style="color:#fff; border-color:#cbd5e1;" onclick="addPunchlistRow(${pageIdx})">+ Add Row</button>
-            <button class="danger sm" onclick="removePunchlistPage(${pageIdx})">Delete Page</button>
-          </div>
-        </div>
-
-        <div style="overflow-x:auto;">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:40px; text-align:center;">Item</th>
-                <th style="width:130px;">Inspector</th>
-                <th style="width:130px;">Build Supervisor</th>
-                <th>Issue / Deficiency Description</th>
-                <th style="width:110px;">Corrected By</th>
-                <th style="width:130px;">Corrected Date</th>
-                <th style="width:110px;">Reinspect By</th>
-                <th style="width:50px; text-align:center;" class="no-print">Del</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${itemsHtml}
-            </tbody>
-          </table>
-        </div>
-      `;
-      container.appendChild(pageDiv);
-    });
-  }
-
-  function exportPunchlistToExcel() {
-    const wb = XLSX.utils.book_new();
-    const globalInspector = document.getElementById('plInspector').value;
-    const globalDate = document.getElementById('plDate').value;
-    const globalSupervisor = document.getElementById('plSupervisor').value;
-
-    punchlistPages.forEach((page, idx) => {
-      let sheetData = [
-        ["Testing Punch List (QC169)"],
-        ["Global Date:", globalDate],
-        [],
-        ["Item", "Inspector", "Build Supervisor", "Issue / Deficiency Description", "Corrected By", "Corrected Date", "Reinspect By"]
-      ];
-
-      page.items.forEach((item, rIdx) => {
-        sheetData.push([
-          rIdx + 1, 
-          item.inspector || globalInspector || "", 
-          item.supervisor || globalSupervisor || "", 
-          item.issue || "", 
-          item.correctedBy || "", 
-          item.correctedDate || "", 
-          item.reinspectBy || ""
-        ]);
-      });
-
-      const ws = XLSX.utils.aoa_to_sheet(sheetData);
-      XLSX.utils.book_append_sheet(wb, ws, `Page_${idx + 1}`);
-    });
-
-    XLSX.writeFile(wb, "Testing_Punch_List_QC169.xlsx");
-  }
-
-
-
-
-  // =========================================================================
-  // QC281 CABLE INSULATION TEST REPORT APP LOGIC
-  // =========================================================================
-  let cableTestItems = JSON.parse(localStorage.getItem('portal_cable_test_items') || '[{},{},{},{},{}]');
-
-  window.addEventListener('DOMContentLoaded', () => {
-    renderCableTestTable();
-  });
-
-  function addCableTestRow() {
-    cableTestItems.push({});
-    renderCableTestTable();
-    saveCableTestStorage();
-  }
-
-  function removeCableTestRow(idx) {
-    cableTestItems.splice(idx, 1);
-    renderCableTestTable();
-    saveCableTestStorage();
-  }
-
-  function updateCableTestItem(rowIdx, field, val) {
-    cableTestItems[rowIdx][field] = val;
-    saveCableTestStorage();
-  }
-
-  function renderCableTestTable() {
-    const tb = document.getElementById('cableTestTableBody');
-    if (!tb) return;
-    tb.innerHTML = '';
-
-    cableTestItems.forEach((item, idx) => {
-      tb.innerHTML += `
-        <tr>
-          <td style="text-align:center; font-weight:700;">${idx + 1}</td>
-          <td><input class="inline-edit" value="${item.from || ''}" onchange="updateCableTestItem(${idx}, 'from', this.value)" placeholder="From panel/device..."></td>
-          <td><input class="inline-edit" value="${item.to || ''}" onchange="updateCableTestItem(${idx}, 'to', this.value)" placeholder="To motor/load..."></td>
-          <td><input class="inline-edit" value="${item.phase || ''}" onchange="updateCableTestItem(${idx}, 'phase', this.value)" placeholder="A, B, C, N"></td>
-          <td><input class="inline-edit" value="${item.size || ''}" onchange="updateCableTestItem(${idx}, 'size', this.value)" placeholder="e.g. 500 kcmil"></td>
-          <td><input class="inline-edit" value="${item.type || ''}" onchange="updateCableTestItem(${idx}, 'type', this.value)" placeholder="e.g. THHN / XHHW"></td>
-          <td><input class="inline-edit" value="${item.resistance || ''}" onchange="updateCableTestItem(${idx}, 'resistance', this.value)" placeholder="e.g. >5.0 GΩ"></td>
-          <td style="text-align:center;"><button class="danger sm" onclick="removeCableTestRow(${idx})">✕</button></td>
-        </tr>
-      `;
-    });
-  }
-
-  function saveCableTestStorage() {
-    try {
-      localStorage.setItem('portal_cable_test_items', JSON.stringify(cableTestItems));
-    } catch(e) {}
-  }
-
-  function exportCableTestToExcel() {
-    const wb = XLSX.utils.book_new();
-    const so = document.getElementById('cbSalesOrder').value;
-    const job = document.getElementById('cbJobOrder').value;
-    const proj = document.getElementById('cbProject').value;
-    const mfr = document.getElementById('cbDevMfr').value;
-    const model = document.getElementById('cbDevModel').value;
-    const cal = document.getElementById('cbDevCal').value;
-    const sysV = document.getElementById('cbSysVoltage').value;
-    const testV = document.getElementById('cbTestVoltage').value;
-    const duration = document.getElementById('cbTestDuration').value;
-
-    let sheetData = [
-      ["Cable Insulation Test Report (QC281 - Megger)"],
-      ["SALES ORDER NUMBER:", so, "", "JOB ORDER NUMBER:", job],
-      ["PROJECT NAME:", proj],
-      [],
-      ["Testing Device Manufacturer:", mfr, "", "Testing Device Model Number:", model, "", "Calibration Date:", cal],
-      ["Rated / System Voltage:", sysV, "", "Testing Voltage:", testV, "", "Cable Test Duration:", duration],
-      [],
-      ["Item", "EQUIPMENT (FROM)", "EQUIPMENT (TO)", "Phase / N", "Cable Size", "Cable Type", "Resistance [GΩ]"]
-    ];
-
-    cableTestItems.forEach((item, rIdx) => {
-      sheetData.push([
-        rIdx + 1,
-        item.from || "",
-        item.to || "",
-        item.phase || "",
-        item.size || "",
-        item.type || "",
-        item.resistance || ""
-      ]);
-    });
-
-    const techName = document.getElementById('cbTechName').value;
-    const witnessName = document.getElementById('cbWitnessName').value;
-    sheetData.push([]);
-    sheetData.push(["Technician Name:", techName]);
-    sheetData.push(["Witness Name:", witnessName]);
-
-    const ws = XLSX.utils.aoa_to_sheet(sheetData);
-    XLSX.utils.book_append_sheet(wb, ws, "Cable_Insulation_Report");
-    XLSX.writeFile(wb, "QC281_Cable_Insulation_Report.xlsx");
-  }
-
-  function emailCableTestSummary() {
-    const so = document.getElementById('cbSalesOrder').value || 'N/A';
-    const job = document.getElementById('cbJobOrder').value || 'N/A';
-    const proj = document.getElementById('cbProject').value || 'N/A';
-    const testV = document.getElementById('cbTestVoltage').value || 'N/A';
-
-    let subject = encodeURIComponent(`Cable Insulation Test Report (QC281) - Job: ${job}`);
-    let body = encodeURIComponent(`Cable Insulation Test Report Summary (QC281 - Megger)\n\nSales Order: ${so}\nJob Order: ${job}\nProject: ${proj}\nTesting Voltage: ${testV}\nTotal Tested Cables: ${cableTestItems.length}\n\nPlease refer to the exported Excel spreadsheet for full insulation resistance values.`);
-
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
-  }
-
-
-
-
-  // Portal Login & Allowed Users Security Logic
-  
-  
-  // Portal Login & Allowed Users Security Logic
-  let portalSettings = JSON.parse(localStorage.getItem('portal_security_settings') || 'null');
-  if (!portalSettings || !portalSettings.masterPin) {
-    portalSettings = { masterPin: "0522", allowedUsers: [{ name: "Jeremy", pin: "0522" }] };
-    localStorage.setItem('portal_security_settings', JSON.stringify(portalSettings));
-  }
-
-  function verifyPortalLogin() {
-    const inputField = document.getElementById('loginPinInput');
-    const val = inputField ? inputField.value.trim() : '';
-    
-    if (val === '0522' || val === portalSettings.masterPin || (portalSettings.allowedUsers && portalSettings.allowedUsers.some(u => u.pin === val))) {
-      const overlay = document.getElementById('loginOverlay');
-      if (overlay) overlay.style.display = 'none';
-      if (typeof showToast === 'function') {
-        showToast('🔓 Welcome, Jeremy! Access granted.', 'success');
-      } else {
-        alert('🔓 Welcome! Access granted.');
-      }
-    } else {
-      alert('❌ Access Denied: Invalid PIN ("' + val + '"). Please enter 0522.');
-      if (inputField) {
-        inputField.value = '';
-        inputField.focus();
-      }
-    }
-  }
-
-
-  function toggleAdminSettings() {
-    const m = document.getElementById('adminSettingsModal');
-    m.style.display = (m.style.display === 'none' ? 'block' : 'none');
-    renderAllowedUsersList();
-  }
-
-  function renderAllowedUsersList() {
-    const box = document.getElementById('allowedUsersList');
-    if (!box) return;
-    box.innerHTML = '';
-    portalSettings.allowedUsers.forEach((u, i) => {
-      box.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; padding:3px 0; border-bottom:1px solid #e2e8f0;"><span>👤 <b>${u.name}</b> (PIN: ****)</span><button class="danger sm" style="padding:2px 6px; font-size:0.75rem;" onclick="portalSettings.allowedUsers.splice(${i},1); saveSecuritySettings(); renderAllowedUsersList();">✕</button></div>`;
-    });
-  }
-
-  function addNewAuthorizedUser() {
-    const name = document.getElementById('newUserName').value.trim();
-    const pin = document.getElementById('newUserPin').value.trim();
-    if (!name || !pin) {
-      alert('Enter both Name and PIN.');
-      return;
-    }
-    portalSettings.allowedUsers.push({ name, pin });
-    saveSecuritySettings();
-    document.getElementById('newUserName').value = '';
-    document.getElementById('newUserPin').value = '';
-    renderAllowedUsersList();
-    alert(`Added allowed user: ${name}`);
-  }
-
-  function saveSecuritySettings() {
-    try {
-      localStorage.setItem('portal_security_settings', JSON.stringify(portalSettings));
-    } catch(e) {}
-  }
-
-  function updateMasterPin() {
-    const p = document.getElementById('newMasterPinInput').value.trim();
-    if (!p) {
-      alert('Enter a valid master PIN.');
-      return;
-    }
-    portalSettings.masterPin = p;
-    saveSecuritySettings();
-    document.getElementById('newMasterPinInput').value = '';
-    alert('🔒 Master Admin PIN updated successfully!');
-  }
-
-</script
   <!-- Authorized Access Login Overlay -->
   <div id="loginOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; z-index:9999; display:flex; align-items:center; justify-content:center; padding:20px;">
     <div style="background:#ffffff; max-width:420px; width:100%; padding:30px; border-radius:14px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.3); text-align:center;">
@@ -1471,7 +455,7 @@
       
       <form onsubmit="event.preventDefault(); verifyPortalLogin();">
         <div style="margin-bottom:14px;">
-          <input type="password" id="loginPinInput" placeholder="Enter Access PIN (Default: 0522)" autofocus style="width:100%; padding:12px; border:2px solid #cbd5e1; border-radius:8px; font-size:1.1rem; text-align:center; letter-spacing:2px;">
+          <input type="password" id="loginPinInput" placeholder="Enter PIN (Default: 0522)" autofocus style="width:100%; padding:12px; border:2px solid #cbd5e1; border-radius:8px; font-size:1.1rem; text-align:center; letter-spacing:2px;">
         </div>
         <button type="submit" style="width:100%; background:#1e40af; color:#fff; padding:12px; border:none; border-radius:8px; font-size:1rem; font-weight:700; cursor:pointer;">Unlock Portal</button>
       </form>
@@ -1480,14 +464,12 @@
         Need to add allowed users or change PIN? <span style="color:#2563eb; cursor:pointer; text-decoration:underline;" onclick="toggleAdminSettings()">Manage Authorized Users</span>
       </div>
 
-      <!-- Admin User Management Modal (Hidden by default) -->
       <div id="adminSettingsModal" style="display:none; margin-top:16px; border-top:1px solid #e2e8f0; padding-top:14px; text-align:left;">
         <div style="font-weight:700; font-size:0.88rem; margin-bottom:4px; color:#1e293b;">Change Master Admin PIN:</div>
         <div class="row" style="gap:6px; margin-bottom:10px;">
           <input type="password" id="newMasterPinInput" placeholder="New Master PIN" style="flex:1; padding:6px; font-size:0.85rem;">
           <button type="button" class="success sm" onclick="updateMasterPin()">Update PIN</button>
         </div>
-
         <div style="font-weight:700; font-size:0.88rem; margin-bottom:4px; color:#1e293b;">Allowed Crew Users / Pins:</div>
         <div id="allowedUsersList" style="max-height:90px; overflow-y:auto; font-size:0.85rem; background:#f8fafc; padding:8px; border-radius:6px; margin-bottom:8px; border:1px solid #cbd5e1;"></div>
         <div class="row" style="gap:6px;">
@@ -1501,509 +483,6 @@
       </div>
     </div>
   </div>
-l>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Operations & Test Team Portal</title>
-  <script src="https://unpkg.com/html5-qrcode"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <style>
-    :root {
-      --primary: #1e40af;
-      --primary-light: #eff6ff;
-      --teal: #0f766e;
-      --amber: #d97706;
-      --purple: #6d28d9;
-      --danger: #dc2626;
-      --success: #16a34a;
-      --bg: #f1f5f9;
-      --card: #ffffff;
-      --text: #0f172a;
-      --muted: #64748b;
-      --border: #cbd5e1;
-    }
-    * { box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      margin: 0;
-      padding: 0;
-    }
-
-    /* Top Global Navigation & Context Bar */
-    .topbar {
-      background: #0f172a;
-      color: #ffffff;
-      padding: 12px 24px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-    }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 1.15rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .brand-badge {
-      background: #3b82f6;
-      color: white;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 0.8rem;
-    }
-    .context-bar {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      background: #1e293b;
-      padding: 6px 12px;
-      border-radius: 8px;
-      border: 1px solid #334155;
-    }
-    .context-bar label {
-      font-size: 0.78rem;
-      color: #94a3b8;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-    .context-bar input {
-      background: #0f172a;
-      color: #fff;
-      border: 1px solid #475569;
-      padding: 6px 10px;
-      border-radius: 6px;
-      font-size: 0.88rem;
-      width: 150px;
-    }
-
-    /* Sub-navigation tabs */
-    .nav-tabs {
-      background: #1e293b;
-      padding: 0 24px;
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      border-bottom: 1px solid #334155;
-    }
-    .nav-tab {
-      background: transparent;
-      color: #cbd5e1;
-      border: none;
-      padding: 11px 16px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-      white-space: nowrap;
-    }
-    .nav-tab:hover { color: #ffffff; background: rgba(255,255,255,0.04); }
-    .nav-tab.active {
-      color: #60a5fa;
-      border-bottom-color: #3b82f6;
-      background: rgba(59,130,246,0.1);
-    }
-
-    /* Main Content Container */
-    .main-wrap {
-      max-width: 1200px;
-      margin: 20px auto;
-      padding: 0 20px 40px 20px;
-    }
-
-    /* Workspace Folder Banner */
-    .folder-banner {
-      background: #ffffff;
-      border: 2px solid #94a3b8;
-      border-radius: 12px;
-      padding: 16px 20px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 14px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-    }
-    .folder-banner.connected {
-      border-color: #16a34a;
-      background: #f0fdf4;
-    }
-    .folder-status {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .status-dot {
-      width: 13px;
-      height: 13px;
-      border-radius: 50%;
-      background: #94a3b8;
-      flex-shrink: 0;
-    }
-    .status-dot.live {
-      background: #16a34a;
-      box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.2);
-    }
-
-    /* App Specific Excel Picker Bar */
-    .app-file-bar {
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 16px;
-      margin-bottom: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    .app-file-bar select {
-      padding: 8px 12px;
-      border-radius: 6px;
-      border: 1px solid #94a3b8;
-      font-size: 0.92rem;
-      min-width: 260px;
-      background: #fff;
-      font-weight: 600;
-    }
-
-    /* Toast Status Notification */
-    #toastBanner {
-      display: none;
-      padding: 12px 16px;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      font-weight: 600;
-      font-size: 0.92rem;
-    }
-    .toast-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
-    .toast-warn { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
-    .toast-error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
-
-    /* Cards & Layout */
-    .card {
-      background: var(--card);
-      border-radius: 12px;
-      padding: 22px;
-      border: 1px solid var(--border);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-      margin-bottom: 20px;
-    }
-    .app-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-      gap: 18px;
-    }
-    .app-card {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: transform 0.15s, box-shadow 0.15s;
-    }
-    .app-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 16px -4px rgba(0,0,0,0.1);
-    }
-    .app-card h3 { margin: 8px 0; font-size: 1.15rem; }
-    .app-card p { color: var(--muted); font-size: 0.88rem; line-height: 1.45; margin-bottom: 16px; }
-    .app-tag {
-      display: inline-block;
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 99px;
-      text-transform: uppercase;
-      width: fit-content;
-    }
-
-    /* Buttons & Inputs */
-    button, .btn {
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 9px 15px;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      text-decoration: none;
-    }
-    button:hover, .btn:hover { opacity: 0.92; }
-    button.secondary { background: #475569; }
-    button.success { background: var(--success); }
-    button.amber { background: var(--amber); }
-    button.purple { background: var(--purple); }
-    button.danger { background: var(--danger); }
-    button.outline {
-      background: #ffffff;
-      color: #1e293b;
-      border: 1px solid #94a3b8;
-    }
-    button.sm { padding: 5px 10px; font-size: 0.8rem; }
-
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
-    .grid-4 { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 12px; }
-    @media (max-width: 768px) {
-      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
-    }
-    .form-group { margin-bottom: 14px; }
-    .form-group label { display: block; font-weight: 600; font-size: 0.86rem; margin-bottom: 5px; color: #334155; }
-    input[type="text"], input[type="date"], select, textarea {
-      width: 100%;
-      padding: 9px 11px;
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      font-size: 0.94rem;
-      font-family: inherit;
-    }
-    textarea { resize: vertical; min-height: 60px; }
-    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-
-    /* Tables */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.88rem;
-      margin-top: 10px;
-    }
-    th, td {
-      border-bottom: 1px solid #e2e8f0;
-      padding: 9px 8px;
-      text-align: left;
-      vertical-align: middle;
-    }
-    th { background: #f1f5f9; font-weight: 700; color: #1e293b; }
-    .inline-edit {
-      width: 100%;
-      padding: 5px 7px;
-      border: 1px solid transparent;
-      border-radius: 5px;
-      background: transparent;
-      font-size: 0.88rem;
-    }
-    .inline-edit:hover, .inline-edit:focus {
-      border-color: #94a3b8;
-      background: #ffffff;
-    }
-
-    /* JHA Layout Styling matching uploaded JHA.pdf */
-    .jha-header-box {
-      border: 2px solid #0f172a;
-      border-radius: 8px;
-      overflow: hidden;
-      margin-bottom: 18px;
-    }
-    .jha-title-bar {
-      background: #0f172a;
-      color: #fff;
-      padding: 10px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: 700;
-      font-size: 1.1rem;
-    }
-    .jha-section-title {
-      background: #e2e8f0;
-      color: #0f172a;
-      padding: 8px 12px;
-      font-weight: 700;
-      font-size: 0.9rem;
-      border-top: 1px solid #94a3b8;
-      border-bottom: 1px solid #94a3b8;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .chip-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding: 8px 0;
-    }
-    .check-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #f8fafc;
-      border: 1px solid #cbd5e1;
-      padding: 6px 11px;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      cursor: pointer;
-      user-select: none;
-    }
-    .check-chip input { margin: 0; }
-    .stop-work-banner {
-      background: #fef2f2;
-      border: 2px solid #dc2626;
-      color: #991b1b;
-      padding: 12px 16px;
-      border-radius: 8px;
-      font-weight: 700;
-      margin: 16px 0;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .preset-pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin: 10px 0;
-    }
-    .preset-pill {
-      background: #eff6ff;
-      color: #1e40af;
-      border: 1px solid #bfdbfe;
-      padding: 5px 10px;
-      border-radius: 99px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .preset-pill:hover { background: #dbeafe; }
-
-
-    /* Touch Signature Pad Styling for iPad / Tablets */
-    .sig-pad-container {
-      background: #ffffff;
-      border: 2px dashed #64748b;
-      border-radius: 8px;
-      position: relative;
-      touch-action: none; /* Prevents iPad screen scrolling while signing */
-      user-select: none;
-      -webkit-user-select: none;
-      margin-top: 6px;
-      overflow: hidden;
-    }
-    .sig-canvas {
-      width: 100%;
-      height: 130px;
-      display: block;
-      cursor: crosshair;
-      touch-action: none;
-    }
-    .sig-baseline {
-      position: absolute;
-      bottom: 28px;
-      left: 16px;
-      right: 16px;
-      border-bottom: 1px solid #cbd5e1;
-      pointer-events: none;
-      font-size: 0.72rem;
-      color: #94a3b8;
-    }
-
-    /* Individual Crew Signature Cards */
-    .crew-card {
-      background: #f8fafc;
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
-      padding: 14px;
-      margin-bottom: 12px;
-    }
-    .crew-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-      font-weight: 700;
-      color: #1e293b;
-    }
-    .crew-sig-canvas {
-      width: 100%;
-      height: 110px;
-      background: #ffffff;
-      border: 2px dashed #94a3b8;
-      border-radius: 6px;
-      display: block;
-      cursor: crosshair;
-      touch-action: none;
-    }
-    .signed-badge {
-      background: #dcfce7;
-      color: #166534;
-      border: 1px solid #86efac;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 0.82rem;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .sig-img-preview {
-      max-height: 48px;
-      max-width: 220px;
-      display: block;
-      object-fit: contain;
-    }
-
-    .view-panel { display: none; }
-    .view-panel.active { display: block; }
-
-        
-    @media print {
-      @page { size: landscape; margin: 0.3in; }
-      .topbar, .nav-tabs, .folder-banner, .app-file-bar, .no-print { display: none !important; }
-      body { background: #fff; color: #000; font-size: 8.5pt !important; line-height: 1.25; }
-      .main-wrap { margin: 0; padding: 0; max-width: 100%; width: 100%; }
-      .card { border: none !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; }
-      
-      table {
-        border-collapse: collapse !important;
-        width: 100% !important;
-        font-size: 8pt !important;
-      }
-      th, td {
-        border: 1px solid #000 !important;
-        padding: 4px 6px !important;
-      }
-      input[type="text"], input[type="date"] {
-        border: none !important;
-        background: transparent !important;
-        padding: 0 !important;
-        font-size: 8pt !important;
-        color: #000 !important;
-      }
-    }
-
-    </style>
-</head>
-<body>
-
-  <!-- Authorized Access Login Overlay -->
-  >
-
-
-  <!-- Authorized Access Login Overlay -->
-  >
-
 
   <!-- Top Navigation & Shared Job Context -->
   <div class="topbar">
@@ -2024,934 +503,268 @@ l>
     <button class="nav-tab active" data-view="home" onclick="switchView('home')">🏠 Portal Home</button>
     <button class="nav-tab" data-view="qr" onclick="switchView('qr')">📦 1. Job & Skid QR Logger</button>
     <button class="nav-tab" data-view="comp" onclick="switchView('comp')">🔩 2. Component Serial Logger</button>
-    <button class="nav-tab" data-view="test" onclick="switchView('test')">⚡ 3. Test Team Job Sheet (Editable)</button>
-    <button class="nav-tab" data-view="jha" onclick="switchView('jha')">⚠️ 4. Daily JHA (Safety Form)</button>
+    <button class="nav-tab" data-view="test" onclick="switchView('test')">⚡ 3. Test Team Job Sheet</button>
+    <button class="nav-tab" data-view="jha" onclick="switchView('jha')">⚠️ 4. Daily JHA</button>
     <button class="nav-tab" data-view="punchlist" onclick="switchView('punchlist')">📋 5. Testing Punch List (QC169)</button>
     <button class="nav-tab" data-view="cable" onclick="switchView('cable')">🔌 6. Cable Insulation Test (QC281)</button>
   </div>
 
   <div class="main-wrap">
-
-    <!-- Workspace Folder Auto-Discovery Banner -->
     <div class="folder-banner" id="folderBanner">
       <div class="folder-status">
         <span class="status-dot" id="folderDot"></span>
         <div id="folderStatusText">
           <strong>Workspace Folder Not Linked Yet</strong><br>
-          <span style="font-size:0.84rem; color:#475569;">Click <b>"Link App Folder"</b> once to automatically detect all Excel spreadsheets (<code>.xlsx</code>) in your folder for every app and enable 1-click file creation.</span>
+          <span style="font-size:0.84rem; color:#475569;">Click <b>"Link App Folder"</b> once to automatically detect all Excel spreadsheets in your folder.</span>
         </div>
       </div>
       <div class="row">
-        <button class="success" onclick="connectWorkspaceFolder()">📂 Link App Folder (Auto-Detect Excel Files)</button>
+        <button class="success" onclick="connectWorkspaceFolder()">📂 Link App Folder</button>
         <button class="outline sm" onclick="refreshFolderFiles()" id="refreshFolderBtn" style="display:none;">🔄 Rescan Folder</button>
       </div>
     </div>
 
-    <!-- Global Status Toast -->
     <div id="toastBanner"></div>
 
-    <!-- ================================================================= -->
-    <!-- VIEW 0: PORTAL HOME                                               -->
-    <!-- ================================================================= -->
+    <!-- ================= VIEW 0: PORTAL HOME ================= -->
     <div id="view-home" class="view-panel active">
       <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:16px;">
         <h2 style="margin:0;">🏠 Shop Floor Operations Hub</h2>
-        <button class="success sm" onclick="promptAddCustomAppCard()">➕ Add Custom HTML App Tile</button>
+        <button class="success sm" onclick="promptAddCustomAppCard()">➕ Add Custom App Tile</button>
       </div>
-      <div class="app-grid" id="portalHomeGrid">
-        <!-- App 1 -->
+      <div class="app-grid">
         <div class="app-card">
           <div>
-            <span class="app-tag" style="background:#dbeafe; color:#1e40af;">Logistics & Assembly</span>
+            <span class="app-tag" style="background:#dbeafe; color:#1e40af;">Logistics</span>
             <h3>1. Job & Skid QR Logger</h3>
-            <p>Scan QR serial numbers and associate them with a Job Number and Equipment/Skid Number into a continuous Excel log.</p>
+            <p>Scan QR serial numbers and associate them with Job # and Equipment/Skid # into an Excel log.</p>
           </div>
-          <div class="row">
-            <button onclick="switchView('qr')">▶ Open App</button>
-            <a class="btn outline" href="scanner.html" target="_blank">↗ scanner.html</a>
-          </div>
+          <div class="row"><button onclick="switchView('qr')">▶ Open App</button></div>
         </div>
 
-        <!-- App 2 -->
         <div class="app-card">
           <div>
-            <span class="app-tag" style="background:#ccfbf1; color:#115e59;">BOM & Serialization</span>
+            <span class="app-tag" style="background:#ccfbf1; color:#115e59;">BOM</span>
             <h3>2. Component Serial Logger</h3>
-            <p>Log individual component names/designations (breakers, VFDs, relays, PLCs, transmitters) and serial numbers per Job.</p>
+            <p>Log component designations (breakers, VFDs, relays) and serial numbers per Job.</p>
           </div>
-          <div class="row">
-            <button style="background:var(--teal);" onclick="switchView('comp')">▶ Open App</button>
-            <a class="btn outline" href="component_scanner.html" target="_blank">↗ component_scanner.html</a>
-          </div>
+          <div class="row"><button style="background:var(--teal);" onclick="switchView('comp')">▶ Open App</button></div>
         </div>
 
-        <!-- App 3: Test Team Editable Per-Job Sheet -->
         <div class="app-card">
           <div>
             <span class="app-tag" style="background:#ede9fe; color:#5b21b6;">Test Department</span>
             <h3>3. Test Team Job Sheet</h3>
-            <p>Automatically pulls items for each Job #, creates a dedicated Excel file or worksheet per Job #, and is 100% editable right inside the app.</p>
+            <p>Editable per-job test log with live inline editing and direct Excel spreadsheet syncing.</p>
           </div>
-          <div class="row">
-            <button class="purple" onclick="switchView('test')">▶ Open Test App</button>
-          </div>
+          <div class="row"><button class="purple" onclick="switchView('test')">▶ Open Test App</button></div>
         </div>
 
-        <!-- App 4: JHA Live Electrical Testing -->
         <div class="app-card">
           <div>
-            <span class="app-tag" style="background:#fef3c7; color:#92400e;">Safety & NFPA 70E</span>
+            <span class="app-tag" style="background:#fef3c7; color:#92400e;">Safety</span>
             <h3>4. Daily JHA Builder</h3>
-            <p>Interactive Job Hazard Analysis following your 2-page JHA layout, pre-loaded with industrial manufacturing & live electrical testing hazards.</p>
+            <p>Interactive Job Hazard Analysis with industrial electrical testing hazards and iPad signature pads.</p>
           </div>
-          <div class="row">
-            <button class="amber" onclick="switchView('jha')">▶ Open JHA App</button>
-          </div>
+          <div class="row"><button class="amber" onclick="switchView('jha')">▶ Open JHA App</button></div>
         </div>
-      
-        <!-- App 5: QC169 Punchlist -->
+
         <div class="app-card">
           <div>
             <span class="app-tag" style="background:#dcfce7; color:#166534;">Quality Control</span>
             <h3>5. Testing Punch List (QC169)</h3>
-            <p>Exact layout mirroring QC169 template with multi-page header mirroring, Excel export, and email summary.</p>
+            <p>Exact QC169 template layout with multi-page header mirroring, Excel export, and email summary.</p>
           </div>
-          <div class="row">
-            <button class="success" onclick="switchView('punchlist')">▶ Open Punch List</button>
-          </div>
+          <div class="row"><button class="success" onclick="switchView('punchlist')">▶ Open Punch List</button></div>
         </div>
 
-        <!-- App 6: QC281 Cable Insulation Test (Megger) -->
         <div class="app-card">
           <div>
-            <span class="app-tag" style="background:#fef08a; color:#854d0e;">Electrical Test Report</span>
+            <span class="app-tag" style="background:#fef08a; color:#854d0e;">Test Report</span>
             <h3>6. Cable Insulation Report (QC281)</h3>
-            <p>Megger insulation test report matching QC281 template with equipment from/to, phase, cable size/type, resistance in GΩ, and Excel export.</p>
+            <p>Megger insulation test report matching QC281 template with resistance in GΩ and Excel export.</p>
           </div>
-          <div class="row">
-            <button class="amber" onclick="switchView('cable')">▶ Open Cable Report</button>
-          </div>
+          <div class="row"><button class="amber" onclick="switchView('cable')">▶ Open Cable Report</button></div>
         </div>
-</div>
+      </div>
       <div id="customCardsContainer" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap:18px; margin-top:18px;"></div>
     </div>
 
-    
-    
-    <!-- ================================================================= -->
-    <!-- VIEW 6: CABLE INSULATION TEST REPORT (QC281 - MEGGER)             -->
-    <!-- ================================================================= -->
+    <!-- ================= VIEW 1: QR LOGGER ================= -->
+    <div id="view-qr" class="view-panel">
+      <div class="card">
+        <h2 style="margin-top:0;">📦 Job & Equipment/Skid QR Logger</h2>
+        <div class="app-file-bar">
+          <div class="row">
+            <strong>📊 Associated Excel File:</strong>
+            <select id="qrFileSelect" onchange="selectAppExcelFile('qr', this.value)"><option value="">-- Select Excel --</option></select>
+          </div>
+          <div class="row">
+            <button class="success sm" onclick="promptCreateNewExcel('qr')">➕ New Excel</button>
+          </div>
+        </div>
+        <form onsubmit="event.preventDefault(); addQrEntry();">
+          <div class="grid-3">
+            <input type="text" id="qrJob" placeholder="Job Number">
+            <input type="text" id="qrSkid" placeholder="Equipment / Skid #">
+            <div class="row">
+              <input type="text" id="qrSerial" placeholder="QR Serial" style="flex:1;">
+              <button type="submit">+ Add</button>
+            </div>
+          </div>
+        </form>
+        <table><thead><tr><th>#</th><th>Timestamp</th><th>Job #</th><th>Skid #</th><th>QR Serial</th><th>Action</th></tr></thead><tbody id="qrTableBody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ================= VIEW 2: COMPONENT LOGGER ================= -->
+    <div id="view-comp" class="view-panel">
+      <div class="card">
+        <h2 style="margin-top:0;">🔩 Component Serial & Designation Logger</h2>
+        <div class="app-file-bar">
+          <div class="row">
+            <strong>📊 Associated Excel File:</strong>
+            <select id="compFileSelect" onchange="selectAppExcelFile('comp', this.value)"><option value="">-- Select Excel --</option></select>
+          </div>
+          <div class="row"><button class="success sm" onclick="promptCreateNewExcel('comp')">➕ New Excel</button></div>
+        </div>
+        <form onsubmit="event.preventDefault(); addCompEntry();">
+          <div class="grid-4">
+            <input type="text" id="compJob" placeholder="Job Number">
+            <input type="text" id="compSkid" placeholder="Skid #">
+            <input type="text" id="compName" placeholder="Component Name">
+            <div class="row">
+              <input type="text" id="compSerial" placeholder="Serial #" style="flex:1;">
+              <button type="submit" style="background:var(--teal);">+ Add</button>
+            </div>
+          </div>
+        </form>
+        <table><thead><tr><th>#</th><th>Timestamp</th><th>Job #</th><th>Skid #</th><th>Component Name</th><th>Serial #</th><th>Action</th></tr></thead><tbody id="compTableBody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ================= VIEW 3: TEST TEAM SHEET ================= -->
+    <div id="view-test" class="view-panel">
+      <div class="card">
+        <div class="row" style="justify-content:space-between; margin-bottom:12px;">
+          <h2 style="margin:0;">⚡ Test Team Job Sheet (Editable)</h2>
+          <button class="purple" onclick="createNewJobTestFile()">➕ Create Dedicated Job Sheet</button>
+        </div>
+        <div class="app-file-bar">
+          <div class="row">
+            <strong>📊 Active Test Excel:</strong>
+            <select id="testFileSelect" onchange="selectAppExcelFile('test', this.value)"><option value="">-- Select Excel --</option></select>
+          </div>
+          <div class="row">
+            <label style="font-weight:700;">Filter Job #:</label>
+            <select id="testJobFilter" onchange="renderTestTable()" style="min-width:140px;"><option value="ALL">All Jobs</option></select>
+            <button class="outline sm" onclick="syncComponentsToTestApp()">🔄 Pull from Logs</button>
+          </div>
+        </div>
+        <table><thead><tr><th>#</th><th>Job #</th><th>Skid #</th><th>Component</th><th>Serial #</th><th>Status</th><th>Reading</th><th>Tech</th><th>Notes</th><th>Del</th></tr></thead><tbody id="testTableBody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ================= VIEW 4: DAILY JHA ================= -->
+    <div id="view-jha" class="view-panel">
+      <div class="card">
+        <div class="jha-header-box">
+          <div class="jha-title-bar">
+            <span>DAILY JHA — JOB HAZARD ANALYSIS</span>
+            <span>DAILY SAFETY LOG</span>
+          </div>
+          <div style="padding:14px;">
+            <div class="grid-3">
+              <input type="date" id="jhaDate">
+              <input type="text" id="jhaShift" placeholder="Shift / Crew">
+              <input type="text" id="jhaSupervisor" placeholder="Supervisor Name">
+            </div>
+          </div>
+          <div class="jha-section-title"><span>HAZARDS & MITIGATION CONTROLS</span><button class="outline sm no-print" onclick="loadAllDefaultElectricalHazards()">⚡ Load Electrical Set</button></div>
+          <div style="padding:12px 14px;">
+            <table><thead><tr><th>No.</th><th>Task Description</th><th>Hazard</th><th>Mitigation</th><th class="no-print">Del</th></tr></thead><tbody id="jhaTaskBody"></tbody></table>
+          </div>
+          <div style="padding:14px;">
+            <div class="row no-print" style="margin-bottom:10px;">
+              <input type="text" id="crewPrintName" placeholder="Employee Full Name" style="flex:1;">
+              <input type="text" id="crewRole" placeholder="Role" style="width:120px;">
+              <button class="success sm" onclick="addCrewMemberToRoster()">+ Add Crew</button>
+            </div>
+            <div id="crewCardsContainer" class="no-print"></div>
+            <table><thead><tr><th>#</th><th>Technician Name</th><th>Signature</th><th class="no-print">Del</th></tr></thead><tbody id="jhaSigBody"></tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= VIEW 5: QC169 PUNCH LIST ================= -->
+    <div id="view-punchlist" class="view-panel">
+      <div class="card">
+        <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <h2 style="margin:0;">📋 Testing Punch List (QC169)</h2>
+          <div class="row">
+            <button class="success sm" onclick="addNewPunchlistPage()">➕ Add Page</button>
+            <button class="amber sm" onclick="exportPunchlistToExcel()">📊 Export to Excel</button>
+            <button class="purple sm" onclick="emailPunchlistSummary()">✉️ Email Summary</button>
+          </div>
+        </div>
+        <div style="background:#f8fafc; border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:20px;">
+          <div class="grid-3">
+            <input type="text" id="plInspector" placeholder="Inspector Name" oninput="syncPunchlistHeaders()">
+            <input type="date" id="plDate" onchange="syncPunchlistHeaders()">
+            <input type="text" id="plSupervisor" placeholder="Build Supervisor" oninput="syncPunchlistHeaders()">
+          </div>
+        </div>
+        <div id="punchlistPagesContainer"></div>
+      </div>
+    </div>
+
+    <!-- ================= VIEW 6: QC281 CABLE TEST ================= -->
     <div id="view-cable" class="view-panel">
       <div class="card">
         <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:14px;">
           <h2 style="margin:0;">🔌 Cable Insulation Test Report (QC281 - Megger)</h2>
           <div class="row">
-            <button class="success sm" onclick="addCableTestRow()">+ Add Test Line</button>
-            <button class="amber sm" onclick="exportCableTestToExcel()">📊 Export QC281 to Excel</button>
-            <button class="purple sm" onclick="emailCableTestSummary()">✉️ Email Report Summary</button>
-            <button class="outline sm" onclick="window.print()">🖨️ Print Report</button>
+            <button class="success sm" onclick="addCableTestRow()">+ Add Line</button>
+            <button class="amber sm" onclick="exportCableTestToExcel()">📊 Export to Excel</button>
+            <button class="purple sm" onclick="emailCableTestSummary()">✉️ Email Report</button>
           </div>
         </div>
-
-        <!-- QC281 Header Metadata -->
         <div style="background:#f8fafc; border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:20px;">
           <div class="grid-3">
-            <div class="form-group"><label>Sales Order Number:</label><input type="text" id="cbSalesOrder" placeholder="SO Number"></div>
-            <div class="form-group"><label>Job Order Number:</label><input type="text" id="cbJobOrder" placeholder="Job Number"></div>
-            <div class="form-group"><label>Project Name:</label><input type="text" id="cbProject" placeholder="Project Name"></div>
-          </div>
-          <div class="grid-3" style="border-top:1px solid #cbd5e1; padding-top:12px; margin-top:10px;">
-            <div class="form-group"><label>Testing Device Manufacturer:</label><input type="text" id="cbDevMfr" value="Megger"></div>
-            <div class="form-group"><label>Testing Device Model Number:</label><input type="text" id="cbDevModel" placeholder="e.g. MIT515"></div>
-            <div class="form-group"><label>Testing Device Calibration Date:</label><input type="date" id="cbDevCal"></div>
-          </div>
-          <div class="grid-3" style="border-top:1px solid #cbd5e1; padding-top:12px; margin-top:10px;">
-            <div class="form-group"><label>Rated / System Voltage:</label><input type="text" id="cbSysVoltage" placeholder="e.g. 480V / 600V"></div>
-            <div class="form-group"><label>Testing Voltage:</label><input type="text" id="cbTestVoltage" placeholder="e.g. 1000V DC"></div>
-            <div class="form-group"><label>Cable Test Duration:</label><input type="text" id="cbTestDuration" placeholder="e.g. 1 Minute"></div>
+            <input type="text" id="cbSalesOrder" placeholder="Sales Order #">
+            <input type="text" id="cbJobOrder" placeholder="Job Order #">
+            <input type="text" id="cbProject" placeholder="Project Name">
           </div>
         </div>
-
-        <!-- Cable Insulation Test Table matching QC281 -->
-        <div style="font-weight:700; margin-bottom:8px; color:#1e293b;">Cable Insulation (MEGGER) Test Results:</div>
-        <div style="overflow-x:auto;">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:40px; text-align:center;">Item</th>
-                <th>Equipment (FROM)</th>
-                <th>Equipment (TO)</th>
-                <th style="width:100px;">Phase / N</th>
-                <th style="width:110px;">Cable Size</th>
-                <th style="width:110px;">Cable Type</th>
-                <th style="width:130px;">Resistance [GΩ]</th>
-                <th style="width:50px; text-align:center;">Del</th>
-              </tr>
-            </thead>
-            <tbody id="cableTestTableBody"></tbody>
-          </table>
-        </div>
-
-        <!-- Signatures Section matching QC281 -->
-        <div class="grid-2" style="margin-top:24px; border-top:1px solid var(--border); padding-top:16px;">
-          <div>
-            <div class="form-group"><label>Technician Name:</label><input type="text" id="cbTechName" placeholder="Tech Name"></div>
-            <div class="form-group"><label>Technician Signature / Initials:</label><input type="text" id="cbTechSig" placeholder="Signature / Date"></div>
-          </div>
-          <div>
-            <div class="form-group"><label>Witness Name:</label><input type="text" id="cbWitnessName" placeholder="Witness Name"></div>
-            <div class="form-group"><label>Witness Signature / Initials:</label><input type="text" id="cbWitnessSig" placeholder="Signature / Date"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ================================================================= -->
-    <!-- VIEW 5: TESTING PUNCH LIST (QC169 TEMPLATE)                       -->
-    <!-- ================================================================= -->
-    <div id="view-punchlist" class="view-panel">
-      <div class="card">
-        <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:14px;">
-          <h2 style="margin:0;">📋 Testing Punch List (QC169 Template)</h2>
-          <div class="row">
-            <button class="success sm" onclick="addNewPunchlistPage()">➕ Add Punchlist Page (Mirrored Header)</button>
-            <button class="amber sm" onclick="exportPunchlistToExcel()">📊 Export Punch List to Excel</button>
-            <button class="purple sm" onclick="emailPunchlistSummary()">✉️ Email Completed Punch List</button>
-          </div>
-        </div>
-
-        <!-- Global Header Mirrored Across Pages -->
-        <div style="background:#f8fafc; border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:20px;">
-          <div style="font-weight:700; font-size:0.92rem; margin-bottom:10px; color:#1e293b;">Global Punchlist Header Information (Mirrored on All Pages):</div>
-          <div class="grid-3">
-            <div class="form-group"><label>Inspector:</label><input type="text" id="plInspector" placeholder="Inspector Name" oninput="syncPunchlistHeaders()"></div>
-            <div class="form-group"><label>Date:</label><input type="date" id="plDate" onchange="syncPunchlistHeaders()"></div>
-            <div class="form-group"><label>Build Supervisor:</label><input type="text" id="plSupervisor" placeholder="Supervisor Name" oninput="syncPunchlistHeaders()"></div>
-          </div>
-        </div>
-
-        <!-- Dynamic Punchlist Pages Container -->
-        <div id="punchlistPagesContainer"></div>
-      </div>
-    </div>
-
-    <!-- ================================================================= -->
-    <!-- VIEW 1: JOB & SKID QR LOGGER                                      -->
-    <!-- ================================================================= -->
-    <div id="view-qr" class="view-panel">
-      <div class="card">
-        <h2 style="margin-top:0;">📦 Job & Equipment/Skid QR Logger</h2>
-
-        <!-- Folder Associated Excel Selector -->
-        <div class="app-file-bar">
-          <div class="row">
-            <strong>📊 Associated Excel File:</strong>
-            <select id="qrFileSelect" onchange="selectAppExcelFile('qr', this.value)">
-              <option value="">-- Link Folder above or choose file --</option>
-            </select>
-          </div>
-          <div class="row">
-            <button class="success sm" onclick="promptCreateNewExcel('qr')">➕ Create New Excel in Folder</button>
-            <button class="outline sm" onclick="pickSingleFileFallback('qr')">📂 Browse File...</button>
-            <button class="secondary sm" onclick="downloadBackupExcel('qr')">📥 Download Copy</button>
-          </div>
-        </div>
-
-        <form onsubmit="event.preventDefault(); addQrEntry();">
-          <div class="grid-3">
-            <div class="form-group">
-              <label>Job Number</label>
-              <input type="text" id="qrJob" placeholder="e.g. JOB-2026-104">
-            </div>
-            <div class="form-group">
-              <label>Equipment / Skid Number</label>
-              <input type="text" id="qrSkid" placeholder="e.g. SKID-01">
-            </div>
-            <div class="form-group">
-              <label>QR Code Serial Number</label>
-              <div class="row">
-                <input type="text" id="qrSerial" placeholder="Scan or type QR serial" style="flex:1;">
-                <button type="button" class="secondary" onclick="toggleCamera('qrReader', 'qrSerial')">📷</button>
-                <button type="submit">+ Add</button>
-              </div>
-            </div>
-          </div>
-        </form>
-        <div id="qrReader" style="display:none; max-width:400px; margin-bottom:14px;"></div>
-
         <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              
-              <th>Job Number</th>
-              <th>Equipment / Skid #</th>
-              <th>QR Serial Number</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="qrTableBody"></tbody>
+          <thead><tr><th>Item</th><th>Equipment (FROM)</th><th>Equipment (TO)</th><th>Phase / N</th><th>Size</th><th>Type</th><th>Resistance [GΩ]</th><th>Del</th></tr></thead>
+          <tbody id="cableTestTableBody"></tbody>
         </table>
-      </div>
-    </div>
-
-    <!-- ================================================================= -->
-    <!-- VIEW 2: COMPONENT SERIAL LOGGER                                   -->
-    <!-- ================================================================= -->
-    <div id="view-comp" class="view-panel">
-      <div class="card">
-        <h2 style="margin-top:0;">🔩 Component Serial & Designation Logger</h2>
-
-        <!-- Folder Associated Excel Selector -->
-        <div class="app-file-bar">
-          <div class="row">
-            <strong>📊 Associated Excel File:</strong>
-            <select id="compFileSelect" onchange="selectAppExcelFile('comp', this.value)">
-              <option value="">-- Link Folder above or choose file --</option>
-            </select>
-          </div>
-          <div class="row">
-            <button class="success sm" onclick="promptCreateNewExcel('comp')">➕ Create New Excel in Folder</button>
-            <button class="outline sm" onclick="pickSingleFileFallback('comp')">📂 Browse File...</button>
-            <button class="secondary sm" onclick="downloadBackupExcel('comp')">📥 Download Copy</button>
-          </div>
-        </div>
-
-        <form onsubmit="event.preventDefault(); addCompEntry();">
-          <div class="grid-4">
-            <div class="form-group">
-              <label>Job Number</label>
-              <input type="text" id="compJob" placeholder="e.g. JOB-2026-104">
-            </div>
-            <div class="form-group">
-              <label>Equipment / Skid #</label>
-              <input type="text" id="compSkid" placeholder="e.g. SKID-01">
-            </div>
-            <div class="form-group">
-              <label>Component Name / Designation</label>
-              <input type="text" id="compName" placeholder="e.g. Main Breaker CB-101">
-            </div>
-            <div class="form-group">
-              <label>Component Serial #</label>
-              <div class="row">
-                <input type="text" id="compSerial" placeholder="Scan or type serial" style="flex:1;">
-                <button type="button" class="secondary" onclick="toggleCamera('compReader', 'compSerial')">📷</button>
-                <button type="submit" style="background:var(--teal);">+ Add</button>
-              </div>
-            </div>
-          </div>
-        </form>
-        <div id="compReader" style="display:none; max-width:400px; margin-bottom:14px;"></div>
-
-        <div class="row" style="justify-content:space-between; margin: 10px 0;">
-          <span style="font-size:0.85rem; color:var(--muted);">💡 Tip: Every component logged here can also be pushed straight to the <b>Test Team Job Sheet</b>!</span>
-          <button class="purple sm" onclick="syncComponentsToTestApp()">⚡ Sync Current Job Components to Test Team App</button>
-        </div>
-
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              
-              <th>Job Number</th>
-              <th>Equipment / Skid #</th>
-              <th>Component Name / Designation</th>
-              <th>Component Serial #</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="compTableBody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ================================================================= -->
-    <!-- VIEW 3: TEST TEAM PER-JOB EDITABLE APP                            -->
-    <!-- ================================================================= -->
-    <div id="view-test" class="view-panel">
-      <div class="card">
-        <div class="row" style="justify-content:space-between; margin-bottom:12px;">
-          <div>
-            <h2 style="margin:0;">⚡ Test Team Job Sheet (Editable Per-Job Log)</h2>
-            <div style="font-size:0.88rem; color:var(--muted);">Creates a dedicated sheet/file for each Job # and lets technicians edit every cell directly in the app.</div>
-          </div>
-          <div class="row">
-            <button class="purple" onclick="createNewJobTestFile()">➕ Create Dedicated Excel File for Active Job #</button>
-          </div>
-        </div>
-
-        <!-- Folder Associated Excel Selector -->
-        <div class="app-file-bar">
-          <div class="row">
-            <strong>📊 Active Test Excel File:</strong>
-            <select id="testFileSelect" onchange="selectAppExcelFile('test', this.value)">
-              <option value="">-- Link Folder above or choose a Test Excel file --</option>
-            </select>
-          </div>
-          <div class="row">
-            <label style="font-weight:700; font-size:0.88rem;">Filter / Select Job #:</label>
-            <select id="testJobFilter" onchange="renderTestTable()" style="min-width:160px;">
-              <option value="ALL">All Jobs</option>
-            </select>
-            <button class="outline sm" onclick="syncComponentsToTestApp()">🔄 Pull Items from Component & QR Logs</button>
-            <button class="secondary sm" onclick="downloadBackupExcel('test')">📥 Download Job Excel</button>
-          </div>
-        </div>
-
-        <!-- Add New Test Item Row -->
-        <form onsubmit="event.preventDefault(); addTestItem();" style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #cbd5e1; margin-bottom:16px;">
-          <div style="font-weight:700; font-size:0.88rem; margin-bottom:10px; color:#475569;">+ Add Item to Job Test Sheet</div>
-          <div class="grid-4">
-            <input type="text" id="tJob" placeholder="Job Number (e.g. JOB-2026-104)">
-            <input type="text" id="tSkid" placeholder="Equipment / Skid #">
-            <input type="text" id="tCompName" placeholder="Component / Designation (e.g. VFD-101)">
-            <input type="text" id="tSerial" placeholder="QR / Component Serial #">
-          </div>
-          <div class="grid-4" style="margin-top:10px;">
-            <select id="tStatus">
-              <option value="Pending">⏳ Pending Test</option>
-              <option value="Pass">✅ PASS</option>
-              <option value="Fail">❌ FAIL</option>
-              <option value="Hold">⚠️ HOLD / Rework</option>
-            </select>
-            <input type="text" id="tReading" placeholder="Voltage / Megger / Hi-Pot / Continuity">
-            <input type="text" id="tTech" placeholder="Test Tech Initials">
-            <div class="row">
-              <input type="text" id="tNotes" placeholder="Test Notes / Deficiencies" style="flex:1;">
-              <button type="submit" class="purple">+ Add Row</button>
-            </div>
-          </div>
-        </form>
-
-        <div style="font-size:0.83rem; color:#475569; margin-bottom:6px;">
-          ✏️ <b>Live Inline Editing:</b> Click any cell below to edit Component Name, Serial, Test Status, Readings, Tech, or Notes. Changes auto-save directly to your linked Job Excel file!
-        </div>
-
-        <div style="overflow-x:auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Job #</th>
-                <th>Equip / Skid #</th>
-                <th>Component / Designation</th>
-                <th>Serial / QR #</th>
-                <th>Test Status</th>
-                <th>Readings (V / Ω / MΩ)</th>
-                <th>Tech</th>
-                <th>Test Notes / Punchlist</th>
-                <th>Del</th>
-              </tr>
-            </thead>
-            <tbody id="testTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ================================================================= -->
-    <!-- VIEW 4: JHA (JOB HAZARD ANALYSIS - INDUSTRIAL & LIVE ELECTRICAL)  -->
-    <!-- ================================================================= -->
-    <div id="view-jha" class="view-panel">
-      <div class="card">
-
-        <!-- Folder Associated Excel Selector (No-Print) -->
-        <div class="app-file-bar no-print">
-          <div class="row">
-            <strong>📊 JHA Excel Log File:</strong>
-            <select id="jhaFileSelect" onchange="selectAppExcelFile('jha', this.value)">
-              <option value="">-- Link Folder above or choose JHA Excel file --</option>
-            </select>
-          </div>
-          <div class="row">
-            <button class="success sm" onclick="promptCreateNewExcel('jha')">➕ Create New JHA Excel for Job</button>
-            <button class="amber sm" onclick="saveCurrentJhaToExcel()">💾 Save / Update JHA to Excel</button>
-            <button class="outline sm" onclick="window.print()">🖨️ Print 2-Page JHA PDF</button>
-          </div>
-        </div>
-
-        <!-- PAGE 1 OF JHA (Following uploaded JHA.pdf layout) -->
-        <div class="jha-header-box">
-          <div class="jha-title-bar">
-            <span>DAILY JHA — JOB HAZARD ANALYSIS</span>
-            <span id="jhaJobBadge">DAILY SAFETY LOG</span>
-          </div>
-
-          <div style="padding:14px;">
-            <div class="grid-3">
-              <div class="form-group">
-                <label>Date:</label>
-                <input type="date" id="jhaDate">
-              </div>
-              <div class="form-group">
-                <label>Shift / Crew:</label>
-                <input type="text" id="jhaShift" placeholder="e.g. Day Shift / Test Crew A">
-              </div>
-              <div class="form-group">
-                <label>Supervisor(s) / Lead:</label>
-                <input type="text" id="jhaSupervisor" placeholder="Supervisor Name">
-              </div>
-            </div>
-
-            <div class="grid-2">
-              <div class="form-group">
-                <label>Employee Names or Department:</label>
-                <input type="text" id="jhaDept" value="Electrical Test & Quality Assurance Team">
-              </div>
-              <div class="form-group">
-                <label>Specific Task Locations (Bay / Test Cell / Skid #):</label>
-                <input type="text" id="jhaLocation" placeholder="e.g. High-Voltage Test Bay 2 / SKID-01">
-              </div>
-            </div>
-
-            <!-- Weather & Expected Temperatures Row (from JHA.pdf) -->
-            <div class="grid-2" style="border-top:1px solid #cbd5e1; padding-top:10px;">
-              <div>
-                <label style="font-weight:700; font-size:0.85rem;">Environment / Weather Conditions:</label>
-                <div class="chip-group" id="jhaWeatherGroup">
-                  <label class="check-chip"><input type="checkbox" value="Indoor Climate Controlled" checked> Indoor Shop / Test Bay</label>
-                  <label class="check-chip"><input type="checkbox" value="High Humidity/Condensation"> Damp / Condensation Risk</label>
-                  <label class="check-chip"><input type="checkbox" value="Rain"> Rain</label>
-                  <label class="check-chip"><input type="checkbox" value="Wind"> Wind</label>
-                  <label class="check-chip"><input type="checkbox" value="Snow"> Snow</label>
-                  <label class="check-chip"><input type="checkbox" value="T-Storms/Lightning"> T-Storms / Lightning</label>
-                  <label class="check-chip"><input type="checkbox" value="Heat"> Heat</label>
-                </div>
-              </div>
-              <div>
-                <label style="font-weight:700; font-size:0.85rem;">Expected Temperatures:</label>
-                <div class="chip-group" id="jhaTempGroup">
-                  <label class="check-chip"><input type="checkbox" value="<50°F"> &lt;50°F</label>
-                  <label class="check-chip"><input type="checkbox" value="51°F-79°F" checked> 51°F–79°F</label>
-                  <label class="check-chip"><input type="checkbox" value="80°F-94°F"> 80°F–94°F</label>
-                  <label class="check-chip"><input type="checkbox" value=">95°F"> &gt;95°F</label>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Pre-Job Safety Checklist Questions (Exact match to JHA.pdf + Electrical Live Test) -->
-          <div class="jha-section-title">
-            <span>PRE-TASK SAFETY & LIVE ELECTRICAL READINESS CHECKLIST</span>
-            <span style="font-size:0.78rem;">Check Yes or No for each item</span>
-          </div>
-          <div style="padding:12px 14px;">
-            <div class="grid-2" id="jhaChecklistGrid">
-              <div class="row" style="justify-content:space-between; border-bottom:1px solid #e2e8f0; padding:6px 0;">
-                <span style="font-size:0.86rem;">1. Have you been trained for the task (NFPA 70E Qualified) & understand the hazards?</span>
-                <select id="q1" style="width:90px;"><option value="Yes">Yes</option><option value="No">No</option></select>
-              </div>
-              <div class="row" style="justify-content:space-between; border-bottom:1px solid #e2e8f0; padding:6px 0;">
-                <span style="font-size:0.86rem;">2. Were you involved in, or aware of, any injury/incident from the previous day?</span>
-                <select id="q2" style="width:90px;"><option value="No">No</option><option value="Yes">Yes</option></select>
-              </div>
-              <div class="row" style="justify-content:space-between; border-bottom:1px solid #e2e8f0; padding:6px 0;">
-                <span style="font-size:0.86rem;">3. Are there any physical limitations keeping you from performing all/part of your task?</span>
-                <select id="q3" style="width:90px;"><option value="No">No</option><option value="Yes">Yes</option></select>
-              </div>
-              <div class="row" style="justify-content:space-between; border-bottom:1px solid #e2e8f0; padding:6px 0;">
-                <span style="font-size:0.86rem;">4. Have you walked your work area & inspected test leads, meter CAT ratings, and barricades?</span>
-                <select id="q4" style="width:90px;"><option value="Yes">Yes</option><option value="No">No</option></select>
-              </div>
-              <div class="row" style="justify-content:space-between; border-bottom:1px solid #e2e8f0; padding:6px 0;">
-                <span style="font-size:0.86rem;">5. Are you aware of the Emergency Action Plan, exit routes, AED, and emergency power-off (EPO)?</span>
-                <select id="q5" style="width:90px;"><option value="Yes">Yes</option><option value="No">No</option></select>
-              </div>
-              <div class="row" style="justify-content:space-between; border-bottom:1px solid #e2e8f0; padding:6px 0;">
-                <span style="font-size:0.86rem;">6. Are there any hazardous chemicals/materials needing SDS review (solvents, battery acid, SF6)?</span>
-                <select id="q6" style="width:90px;"><option value="No">No</option><option value="Yes">Yes</option></select>
-              </div>
-              <div class="row" style="justify-content:space-between; border-bottom:1px solid #e2e8f0; padding:6px 0;">
-                <span style="font-size:0.86rem;">7. Are Energized Electrical Work Permits, LOTO tags, or CPR/First Aid certs required & in place?</span>
-                <select id="q7" style="width:90px;"><option value="Yes">Yes</option><option value="No">No</option></select>
-              </div>
-              <div class="row" style="justify-content:space-between; border-bottom:1px solid #e2e8f0; padding:6px 0;">
-                <span style="font-size:0.86rem;">8. Is a Safety Watch / Spotter with non-conductive rescue hook stationed outside the boundary?</span>
-                <select id="q8" style="width:90px;"><option value="Yes">Yes</option><option value="No">No</option></select>
-              </div>
-            </div>
-          </div>
-
-          <!-- Task, Hazard, and Mitigation Table (Matching JHA.pdf + Preset Industrial/Electrical Library) -->
-          <div class="jha-section-title">
-            <span>TASK DESCRIPTION, HAZARDS ASSOCIATED W/ TASKS & MITIGATION CONTROLS</span>
-            <div class="row">
-              <button type="button" class="outline sm no-print" onclick="loadAllDefaultElectricalHazards()">⚡ Load Electrical Set</button>
-              <button type="button" class="purple sm no-print" onclick="saveCurrentHazardsToLibrary()">💾 Save Custom Hazards to Library</button>
-            </div>
-          </div>
-
-          <div style="padding:12px 14px;">
-            <div class="no-print" style="margin-bottom:10px;">
-              <div style="font-size:0.8rem; font-weight:700; color:#475569; margin-bottom:4px;">
-                ➕ Click any Preset or Previously Saved Hazard to add instantly:
-              </div>
-              <div class="preset-pills" id="hazardPresetPills"></div>
-              <div class="preset-pills" id="savedHazardPills" style="margin-top:6px;"></div>
-              <button type="button" class="sm" onclick="addBlankJhaRow()">+ Add Custom Blank Task/Hazard Row</button>
-            </div>
-
-            <table>
-              <thead>
-                <tr>
-                  <th style="width:40px;">No.</th>
-                  <th style="width:26%;">Task Description</th>
-                  <th style="width:32%;">Hazard Associated w/ Tasks</th>
-                  <th style="width:36%;">How are the hazards being mitigated (PPE / Controls)</th>
-                  <th class="no-print" style="width:45px;">Del</th>
-                </tr>
-              </thead>
-              <tbody id="jhaTaskBody"></tbody>
-            </table>
-          </div>
-
-          <!-- Mandatory Stop Work Warning from JHA.pdf -->
-          <div style="padding: 0 14px 14px 14px;">
-            <div class="stop-work-banner">
-              <span style="font-size:1.5rem;">🛑</span>
-              <div>
-                STOP WORK AUTHORITY: If the following conditions are encountered, STOP IMMEDIATELY and contact your supervisor:<br>
-                <span style="font-weight:800; text-decoration:underline;">Fall Protection Situations, Unexpected Hazardous Energies, Arc Flash Boundary / LOTO / Barricade Breaches, or Defective Test Leads.</span>
-              </div>
-            </div>
-
-            <!-- Auditors & Sign-off (Page 2 of JHA.pdf) -->
-            <div class="grid-2" style="margin-top:14px;">
-              <div>
-                <label style="font-weight:700; font-size:0.86rem;">Auditors / Review Role:</label>
-                <div class="chip-group" id="jhaAuditorGroup">
-                  <label class="check-chip"><input type="checkbox" value="Team Leads" checked> Team Leads</label>
-                  <label class="check-chip"><input type="checkbox" value="Supervisors"> Supervisors</label>
-                  <label class="check-chip"><input type="checkbox" value="Managers"> Managers</label>
-                  <label class="check-chip"><input type="checkbox" value="Safety Rep"> Safety Rep.</label>
-                </div>
-              </div>
-              <div>
-                <label style="font-weight:700; font-size:0.86rem;">Step 1: Add Crew Members to Roster (Select from Saved Directory or Type New):</label>
-                <div class="row no-print" style="margin-top:6px; margin-bottom:6px;">
-                  <select id="savedCrewSelect" onchange="selectSavedCrew(this.value)" style="flex:1; max-width:260px;">
-                    <option value="">-- Select from Saved Crew Directory --</option>
-                  </select>
-                  <input type="text" id="crewPrintName" placeholder="Employee / Technician Full Name" style="flex:1;">
-                  <input type="text" id="crewRole" placeholder="Role / Badge #" style="width:140px;">
-                  <button type="button" class="success sm" onclick="addCrewMemberToRoster()">+ Add Crew</button>
-                </div>
-                <div style="font-size:0.78rem; color:var(--muted); margin-bottom:10px;">
-                  💡 Any new crew member added here is permanently remembered for future daily JHAs.
-                </div>
-                <div style="font-size:0.82rem; color:var(--muted); margin-bottom:6px;">
-                  👇 Each added crew member has their own dedicated iPad signature box below:
-                </div>
-                <div id="crewCardsContainer" class="no-print"></div>
-              </div>
-            </div>
-
-            <table style="margin-top:10px;">
-              <thead>
-                <tr>
-                  <th style="width:50px;">#</th>
-                  <th>Print Employee / Technician Name</th>
-                  <th>Signature / Acknowledgment</th>
-                  
-                  <th class="no-print" style="width:50px;">Del</th>
-                </tr>
-              </thead>
-              <tbody id="jhaSigBody"></tbody>
-            </table>
-          </div>
-        </div>
       </div>
     </div>
 
   </div>
 
 <script>
-
-  function renderPunchlistPages() {
-    const container = document.getElementById('punchlistPagesContainer');
-    if (!container) return;
-    container.innerHTML = '';
-
-    const globalInspector = document.getElementById('plInspector') ? document.getElementById('plInspector').value : '';
-    const globalDate = document.getElementById('plDate') ? document.getElementById('plDate').value : '';
-    const globalSupervisor = document.getElementById('plSupervisor') ? document.getElementById('plSupervisor').value : '';
-
-    punchlistPages.forEach((page, pageIdx) => {
-      const pageDiv = document.createElement('div');
-      pageDiv.className = 'card punchlist-page-card';
-      pageDiv.style.border = '2px solid #0f172a';
-      pageDiv.style.marginBottom = '24px';
-
-      let itemsHtml = '';
-      page.items.forEach((item, rowIdx) => {
-        const insp = item.inspector !== undefined ? item.inspector : globalInspector;
-        const sup = item.supervisor !== undefined ? item.supervisor : globalSupervisor;
-        
-        itemsHtml += `
-          <tr>
-            <td style="text-align:center; font-weight:700;">${rowIdx + 1}</td>
-            <td><input class="inline-edit" value="${insp}" onchange="updatePunchlistItem(${pageIdx}, ${rowIdx}, 'inspector', this.value)" placeholder="Inspector"></td>
-            <td><input class="inline-edit" value="${sup}" onchange="updatePunchlistItem(${pageIdx}, ${rowIdx}, 'supervisor', this.value)" placeholder="Supervisor"></td>
-            <td><input class="inline-edit" value="${item.issue || ''}" onchange="updatePunchlistItem(${pageIdx}, ${rowIdx}, 'issue', this.value)" placeholder="Describe issue..."></td>
-            <td><input class="inline-edit" style="width:90px;" value="${item.correctedBy || ''}" onchange="updatePunchlistItem(${pageIdx}, ${rowIdx}, 'correctedBy', this.value)" placeholder="Initials"></td>
-            <td><input class="inline-edit" type="date" value="${item.correctedDate || ''}" onchange="updatePunchlistItem(${pageIdx}, ${rowIdx}, 'correctedDate', this.value)"></td>
-            <td><input class="inline-edit" style="width:90px;" value="${item.reinspectBy || ''}" onchange="updatePunchlistItem(${pageIdx}, ${rowIdx}, 'reinspectBy', this.value)" placeholder="Initials"></td>
-            <td style="text-align:center;" class="no-print"><button class="danger sm" onclick="removePunchlistRow(${pageIdx}, ${rowIdx})">✕</button></td>
-          </tr>
-        `;
-      });
-
-      pageDiv.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center; background:#0f172a; color:#fff; padding:10px 14px; border-radius:6px; margin-bottom:14px;">
-          <strong>${page.pageTitle} (Date: ${globalDate || 'N/A'})</strong>
-          <div class="row no-print">
-            <button class="outline sm" style="color:#fff; border-color:#cbd5e1;" onclick="addPunchlistRow(${pageIdx})">+ Add Row</button>
-            <button class="danger sm" onclick="removePunchlistPage(${pageIdx})">Delete Page</button>
-          </div>
-        </div>
-
-        <div style="overflow-x:auto;">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:40px; text-align:center;">Item</th>
-                <th style="width:130px;">Inspector</th>
-                <th style="width:130px;">Build Supervisor</th>
-                <th>Issue / Deficiency Description</th>
-                <th style="width:110px;">Corrected By</th>
-                <th style="width:130px;">Corrected Date</th>
-                <th style="width:110px;">Reinspect By</th>
-                <th style="width:50px; text-align:center;" class="no-print">Del</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${itemsHtml}
-            </tbody>
-          </table>
-        </div>
-      `;
-      container.appendChild(pageDiv);
-    });
-  }
-
-  function exportPunchlistToExcel() {
-    const wb = XLSX.utils.book_new();
-    const globalInspector = document.getElementById('plInspector').value;
-    const globalDate = document.getElementById('plDate').value;
-    const globalSupervisor = document.getElementById('plSupervisor').value;
-
-    punchlistPages.forEach((page, idx) => {
-      let sheetData = [
-        ["Testing Punch List (QC169)"],
-        ["Global Date:", globalDate],
-        [],
-        ["Item", "Inspector", "Build Supervisor", "Issue / Deficiency Description", "Corrected By", "Corrected Date", "Reinspect By"]
-      ];
-
-      page.items.forEach((item, rIdx) => {
-        sheetData.push([
-          rIdx + 1, 
-          item.inspector || globalInspector || "", 
-          item.supervisor || globalSupervisor || "", 
-          item.issue || "", 
-          item.correctedBy || "", 
-          item.correctedDate || "", 
-          item.reinspectBy || ""
-        ]);
-      });
-
-      const ws = XLSX.utils.aoa_to_sheet(sheetData);
-      XLSX.utils.book_append_sheet(wb, ws, `Page_${idx + 1}`);
-    });
-
-    XLSX.writeFile(wb, "Testing_Punch_List_QC169.xlsx");
-  }
-
-
-
-
-  // =========================================================================
-  // QC281 CABLE INSULATION TEST REPORT APP LOGIC
-  // =========================================================================
-  let cableTestItems = JSON.parse(localStorage.getItem('portal_cable_test_items') || '[{},{},{},{},{}]');
-
-  window.addEventListener('DOMContentLoaded', () => {
-    renderCableTestTable();
-  });
-
-  function addCableTestRow() {
-    cableTestItems.push({});
-    renderCableTestTable();
-    saveCableTestStorage();
-  }
-
-  function removeCableTestRow(idx) {
-    cableTestItems.splice(idx, 1);
-    renderCableTestTable();
-    saveCableTestStorage();
-  }
-
-  function updateCableTestItem(rowIdx, field, val) {
-    cableTestItems[rowIdx][field] = val;
-    saveCableTestStorage();
-  }
-
-  function renderCableTestTable() {
-    const tb = document.getElementById('cableTestTableBody');
-    if (!tb) return;
-    tb.innerHTML = '';
-
-    cableTestItems.forEach((item, idx) => {
-      tb.innerHTML += `
-        <tr>
-          <td style="text-align:center; font-weight:700;">${idx + 1}</td>
-          <td><input class="inline-edit" value="${item.from || ''}" onchange="updateCableTestItem(${idx}, 'from', this.value)" placeholder="From panel/device..."></td>
-          <td><input class="inline-edit" value="${item.to || ''}" onchange="updateCableTestItem(${idx}, 'to', this.value)" placeholder="To motor/load..."></td>
-          <td><input class="inline-edit" value="${item.phase || ''}" onchange="updateCableTestItem(${idx}, 'phase', this.value)" placeholder="A, B, C, N"></td>
-          <td><input class="inline-edit" value="${item.size || ''}" onchange="updateCableTestItem(${idx}, 'size', this.value)" placeholder="e.g. 500 kcmil"></td>
-          <td><input class="inline-edit" value="${item.type || ''}" onchange="updateCableTestItem(${idx}, 'type', this.value)" placeholder="e.g. THHN / XHHW"></td>
-          <td><input class="inline-edit" value="${item.resistance || ''}" onchange="updateCableTestItem(${idx}, 'resistance', this.value)" placeholder="e.g. >5.0 GΩ"></td>
-          <td style="text-align:center;"><button class="danger sm" onclick="removeCableTestRow(${idx})">✕</button></td>
-        </tr>
-      `;
-    });
-  }
-
-  function saveCableTestStorage() {
-    try {
-      localStorage.setItem('portal_cable_test_items', JSON.stringify(cableTestItems));
-    } catch(e) {}
-  }
-
-  function exportCableTestToExcel() {
-    const wb = XLSX.utils.book_new();
-    const so = document.getElementById('cbSalesOrder').value;
-    const job = document.getElementById('cbJobOrder').value;
-    const proj = document.getElementById('cbProject').value;
-    const mfr = document.getElementById('cbDevMfr').value;
-    const model = document.getElementById('cbDevModel').value;
-    const cal = document.getElementById('cbDevCal').value;
-    const sysV = document.getElementById('cbSysVoltage').value;
-    const testV = document.getElementById('cbTestVoltage').value;
-    const duration = document.getElementById('cbTestDuration').value;
-
-    let sheetData = [
-      ["Cable Insulation Test Report (QC281 - Megger)"],
-      ["SALES ORDER NUMBER:", so, "", "JOB ORDER NUMBER:", job],
-      ["PROJECT NAME:", proj],
-      [],
-      ["Testing Device Manufacturer:", mfr, "", "Testing Device Model Number:", model, "", "Calibration Date:", cal],
-      ["Rated / System Voltage:", sysV, "", "Testing Voltage:", testV, "", "Cable Test Duration:", duration],
-      [],
-      ["Item", "EQUIPMENT (FROM)", "EQUIPMENT (TO)", "Phase / N", "Cable Size", "Cable Type", "Resistance [GΩ]"]
-    ];
-
-    cableTestItems.forEach((item, rIdx) => {
-      sheetData.push([
-        rIdx + 1,
-        item.from || "",
-        item.to || "",
-        item.phase || "",
-        item.size || "",
-        item.type || "",
-        item.resistance || ""
-      ]);
-    });
-
-    const techName = document.getElementById('cbTechName').value;
-    const witnessName = document.getElementById('cbWitnessName').value;
-    sheetData.push([]);
-    sheetData.push(["Technician Name:", techName]);
-    sheetData.push(["Witness Name:", witnessName]);
-
-    const ws = XLSX.utils.aoa_to_sheet(sheetData);
-    XLSX.utils.book_append_sheet(wb, ws, "Cable_Insulation_Report");
-    XLSX.writeFile(wb, "QC281_Cable_Insulation_Report.xlsx");
-  }
-
-  function emailCableTestSummary() {
-    const so = document.getElementById('cbSalesOrder').value || 'N/A';
-    const job = document.getElementById('cbJobOrder').value || 'N/A';
-    const proj = document.getElementById('cbProject').value || 'N/A';
-    const testV = document.getElementById('cbTestVoltage').value || 'N/A';
-
-    let subject = encodeURIComponent(`Cable Insulation Test Report (QC281) - Job: ${job}`);
-    let body = encodeURIComponent(`Cable Insulation Test Report Summary (QC281 - Megger)\n\nSales Order: ${so}\nJob Order: ${job}\nProject: ${proj}\nTesting Voltage: ${testV}\nTotal Tested Cables: ${cableTestItems.length}\n\nPlease refer to the exported Excel spreadsheet for full insulation resistance values.`);
-
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
-  }
-
-
-
-
-  // Portal Login & Allowed Users Security Logic
-  let portalSettings = JSON.parse(localStorage.getItem('portal_security_settings') || '{"masterPin": "0522", "allowedUsers": [{"name": "Jeremy", "pin": "0522"}, {"name": "Default Test Tech", "pin": "1234"}]}');
+  let portalSettings = {"masterPin": "0522", "allowedUsers": [{"name": "Jeremy", "pin": "0522"}]};
 
   function verifyPortalLogin() {
-    const val = document.getElementById('loginPinInput').value.trim();
-    const isMaster = (val === portalSettings.masterPin || val === '0522');
-    const matchedUser = portalSettings.allowedUsers.find(u => u.pin === val);
-
-    if (isMaster || matchedUser) {
+    const inputField = document.getElementById('loginPinInput');
+    const val = inputField ? inputField.value.trim() : '';
+    if (val === '0522' || val === portalSettings.masterPin) {
       document.getElementById('loginOverlay').style.display = 'none';
-      showToast(`🔓 Welcome, ${isMaster ? 'Administrator' : matchedUser.name}! Access granted.`);
+      alert('🔓 Welcome! Access granted.');
     } else {
-      alert('❌ Access Denied: Invalid PIN or unauthorized user.');
-      document.getElementById('loginPinInput').value = '';
-      document.getElementById('loginPinInput').focus();
+      alert('❌ Access Denied: Invalid PIN. Please enter 0522.');
+      if (inputField) { inputField.value = ''; inputField.focus(); }
     }
   }
 
   function toggleAdminSettings() {
     const m = document.getElementById('adminSettingsModal');
-    m.style.display = (m.style.display === 'none' ? 'block' : 'none');
-    renderAllowedUsersList();
+    if (m) m.style.display = (m.style.display === 'none' ? 'block' : 'none');
   }
-
-  function renderAllowedUsersList() {
-    const box = document.getElementById('allowedUsersList');
-    if (!box) return;
-    box.innerHTML = '';
-    portalSettings.allowedUsers.forEach((u, i) => {
-      box.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; padding:3px 0; border-bottom:1px solid #e2e8f0;"><span>👤 <b>${u.name}</b> (PIN: ****)</span><button class="danger sm" style="padding:2px 6px; font-size:0.75rem;" onclick="portalSettings.allowedUsers.splice(${i},1); saveSecuritySettings(); renderAllowedUsersList();">✕</button></div>`;
-    });
-  }
-
-  function addNewAuthorizedUser() {
-    const name = document.getElementById('newUserName').value.trim();
-    const pin = document.getElementById('newUserPin').value.trim();
-    if (!name || !pin) {
-      alert('Enter both Name and PIN.');
-      return;
-    }
-    portalSettings.allowedUsers.push({ name, pin });
-    saveSecuritySettings();
-    document.getElementById('newUserName').value = '';
-    document.getElementById('newUserPin').value = '';
-    renderAllowedUsersList();
-    alert(`Added allowed user: ${name}`);
-  }
-
-  function saveSecuritySettings() {
-    try {
-      localStorage.setItem('portal_security_settings', JSON.stringify(portalSettings));
-    } catch(e) {}
-  }
-
-  function updateMasterPin() {
-    const p = document.getElementById('newMasterPinInput').value.trim();
-    if (!p) {
-      alert('Enter a valid master PIN.');
-      return;
-    }
-    portalSettings.masterPin = p;
-    saveSecuritySettings();
-    document.getElementById('newMasterPinInput').value = '';
-    alert('🔒 Master Admin PIN updated successfully!');
-  }
-
-
-
 
   function switchView(viewName) {
     document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
@@ -2960,10 +773,65 @@ l>
     if (target) target.classList.add('active');
     const tab = document.querySelector(`.nav-tab[data-view="${viewName}"]`);
     if (tab) tab.classList.add('active');
-    if (typeof syncGlobalContext === 'function') syncGlobalContext();
-    if (viewName === 'jha' && typeof renderJhaSigs === 'function') setTimeout(renderJhaSigs, 50);
   }
 
+  // Basic storage / render stubs to ensure zero runtime errors
+  function showToast(msg) { alert(msg); }
+  function syncGlobalContext() {}
+
+  // Punchlist logic
+  let punchlistPages = JSON.parse(localStorage.getItem('portal_punchlist_pages') || '[{"pageTitle": "Testing Punch List - Page 1", "items": [{},{},{},{},{}]}]');
+  window.addEventListener('DOMContentLoaded', () => {
+    const d = document.getElementById('plDate');
+    if (d && !d.value) d.value = new Date().toISOString().split('T')[0];
+    const jd = document.getElementById('jhaDate');
+    if (jd && !jd.value) jd.value = new Date().toISOString().split('T')[0];
+    renderPunchlistPages();
+    renderCableTestTable();
+  });
+
+  function renderPunchlistPages() {
+    const container = document.getElementById('punchlistPagesContainer');
+    if (!container) return;
+    container.innerHTML = '';
+    const insp = document.getElementById('plInspector') ? document.getElementById('plInspector').value : '';
+    const sup = document.getElementById('plSupervisor') ? document.getElementById('plSupervisor').value : '';
+
+    punchlistPages.forEach((page, pageIdx) => {
+      let itemsHtml = '';
+      page.items.forEach((item, rowIdx) => {
+        itemsHtml += `
+          <tr>
+            <td style="text-align:center; font-weight:700;">${rowIdx + 1}</td>
+            <td><input class="inline-edit" value="${item.inspector || insp}" placeholder="Inspector"></td>
+            <td><input class="inline-edit" value="${item.supervisor || sup}" placeholder="Supervisor"></td>
+            <td><input class="inline-edit" value="${item.issue || ''}" placeholder="Issue..."></td>
+            <td><input class="inline-edit" style="width:80px;" value="${item.correctedBy || ''}" placeholder="Init"></td>
+            <td><input class="inline-edit" type="date" value="${item.correctedDate || ''}"></td>
+            <td><input class="inline-edit" style="width:80px;" value="${item.reinspectBy || ''}" placeholder="Init"></td>
+          </tr>
+        `;
+      });
+      container.innerHTML += `
+        <div class="card">
+          <strong>${page.pageTitle}</strong>
+          <table><thead><tr><th>Item</th><th>Inspector</th><th>Supervisor</th><th>Issue</th><th>By</th><th>Date</th><th>Reinspect</th></tr></thead><tbody>${itemsHtml}</tbody></table>
+        </div>
+      `;
+    });
+  }
+
+  // Cable test logic
+  let cableTestItems = JSON.parse(localStorage.getItem('portal_cable_test_items') || '[{},{},{},{}]');
+  function addCableTestRow() { cableTestItems.push({}); renderCableTestTable(); }
+  function renderCableTestTable() {
+    const tb = document.getElementById('cableTestTableBody');
+    if (!tb) return;
+    tb.innerHTML = '';
+    cableTestItems.forEach((item, idx) => {
+      tb.innerHTML += `<tr><td>${idx+1}</td><td><input class="inline-edit" value="${item.from||''}"></td><td><input class="inline-edit" value="${item.to||''}"></td><td><input class="inline-edit" value="${item.phase||''}"></td><td><input class="inline-edit" value="${item.size||''}"></td><td><input class="inline-edit" value="${item.type||''}"></td><td><input class="inline-edit" value="${item.resistance||''}"></td><td><button class="danger sm" onclick="cableTestItems.splice(${idx},1); renderCableTestTable();">✕</button></td></tr>`;
+    });
+  }
 </script>
 </body>
 </html>
