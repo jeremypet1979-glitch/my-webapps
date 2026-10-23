@@ -584,7 +584,11 @@
     <!-- VIEW 0: PORTAL HOME                                               -->
     <!-- ================================================================= -->
     <div id="view-home" class="view-panel active">
-      <div class="app-grid">
+      <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h2 style="margin:0;">🏠 Shop Floor Operations Hub</h2>
+        <button class="success sm" onclick="promptAddCustomAppCard()">➕ Add Custom HTML App Tile</button>
+      </div>
+      <div class="app-grid" id="portalHomeGrid">
         <!-- App 1 -->
         <div class="app-card">
           <div>
@@ -635,6 +639,7 @@
           </div>
         </div>
       </div>
+      <div id="customCardsContainer" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap:18px; margin-top:18px;"></div>
     </div>
 
     <!-- ================================================================= -->
@@ -2117,7 +2122,7 @@
 
 
   // Portal Login & Allowed Users Security Logic
-  let portalSettings = JSON.parse(localStorage.getItem('portal_security_settings') || '{"masterPin": "0522", "allowedUsers": [{"name": "Default Test Tech", "pin": "1234"}]}');
+  let portalSettings = JSON.parse(localStorage.getItem('portal_security_settings') || '{"masterPin": "0522", "allowedUsers": [{"name": "Default Test Tech", "pin": "1211"}]}');
 
   function verifyPortalLogin() {
     const val = document.getElementById('loginPinInput').value.trim();
@@ -2182,6 +2187,66 @@
     saveSecuritySettings();
     document.getElementById('newMasterPinInput').value = '';
     showToast('🔒 Master Admin PIN updated successfully!', 'success');
+  }
+
+
+
+
+  // Dynamic Custom App Tiles Manager
+  let customAppCards = JSON.parse(localStorage.getItem('portal_custom_cards') || '[]');
+
+  window.addEventListener('DOMContentLoaded', () => {
+    renderCustomAppCards();
+  });
+
+  function promptAddCustomAppCard() {
+    const title = prompt('Enter App / Tool Title (e.g., 5. Torque Log):');
+    if (!title) return;
+    const tag = prompt('Enter Category Tag (e.g. Quality Assurance):', 'Custom Utility');
+    const desc = prompt('Enter brief description of this tool:');
+    const link = prompt('Enter HTML filename or web link (e.g. torque_log.html):', 'tool.html');
+
+    customAppCards.push({ title, tag, desc, link });
+    saveCustomCards();
+    renderCustomAppCards();
+    showToast(`✅ Added custom app tile "${title}"!`, 'success');
+  }
+
+  function renderCustomAppCards() {
+    const container = document.getElementById('customCardsContainer');
+    if (!container) return;
+    container.innerHTML = '';
+    customAppCards.forEach((c, idx) => {
+      const card = document.createElement('div');
+      card.className = 'app-card';
+      card.innerHTML = `
+        <div>
+          <span class="app-tag" style="background:#f3e8ff; color:#6b21a8;">${escapeHtml(c.tag)}</span>
+          <h3>${escapeHtml(c.title)}</h3>
+          <p>${escapeHtml(c.desc)}</p>
+        </div>
+        <div class="row" style="justify-content:space-between; align-items:center;">
+          <a class="btn outline" href="${escapeAttr(c.link)}" target="_blank">↗ Open ${escapeHtml(c.link)}</a>
+          <button class="danger sm" onclick="removeCustomCard(${idx})">✕ Remove</button>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  function removeCustomCard(idx) {
+    if (confirm('Remove this custom app tile?')) {
+      customAppCards.splice(idx, 1);
+      saveCustomCards();
+      renderCustomAppCards();
+      showToast('Removed custom app tile.', 'success');
+    }
+  }
+
+  function saveCustomCards() {
+    try {
+      localStorage.setItem('portal_custom_cards', JSON.stringify(customAppCards));
+    } catch(e) {}
   }
 
 </script>
