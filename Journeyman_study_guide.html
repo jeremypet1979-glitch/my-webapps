@@ -224,45 +224,92 @@
     <!-- ================= 4. CALCULATOR SECTION ================= -->
     <div id="sec-calculator" class="view-section">
       <div class="card">
-        <h2>🧮 Advanced Electrical Exam Calculator Suite</h2>
-        <p style="color:var(--muted);">Professional tools for voltage drop, ampacity derating factors, and parallel circuits.</p>
+        <h2>🧮 Exam Scientific Calculator & Formulas Reference</h2>
+        <p style="color:var(--muted);">Full scientific calculator combined with standard Utah electrical licensing calculation formulas.</p>
         
-        <div class="calc-grid">
-          <!-- Calc 1: Voltage Drop -->
-          <div class="calc-box">
-            <h4>⚡ Voltage Drop ($V_d$)</h4>
-            <label>System Type:</label>
-            <select id="calcVdPhase"><option value="1">Single Phase (2-wire)</option><option value="1.732">Three Phase</option></select>
-            <label>Conductor Material:</label>
-            <select id="calcVdK"><option value="12.9">Copper (K=12.9)</option><option value="21.2">Aluminum (K=21.2)</option></select>
-            <label>Current (Amps):</label><input type="number" id="calcVdAmps" value="30">
-            <label>One-Way Distance (Feet):</label><input type="number" id="calcVdLength" value="150">
-            <label>Circular Mil Area (Cmil):</label><input type="number" id="calcVdCmil" value="16510">
-            <button onclick="calculateVd()" class="success" style="width:100%; margin-top:8px;">Calculate Voltage Drop</button>
-            <div id="calcVdResult" style="margin-top:10px; font-weight:700; color:#60a5fa;"></div>
+        
+          <!-- Calculator Grid: Scientific Calculator + Reference Formulas -->
+          <div class="calc-grid" style="grid-template-columns: 1fr 1.2fr;">
+            
+            <!-- Left Box: Interactive Scientific Calculator -->
+            <div class="calc-box" style="background:#020617;">
+              <h4 style="margin-top:0; color:#60a5fa;">🧮 Exam Scientific Calculator</h4>
+              <input type="text" id="calcDisplay" readonly style="background:#0f172a; color:#38bdf8; font-size:1.4rem; text-align:right; letter-spacing:1px; margin-bottom:12px; height:50px;">
+              
+              <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:6px;">
+                <button onclick="calcClear()" class="danger" style="padding:12px;">C</button>
+                <button onclick="calcAppend('(')" class="secondary" style="padding:12px; background:#334155;">(</button>
+                <button onclick="calcAppend(')')" class="secondary" style="padding:12px; background:#334155;">)</button>
+                <button onclick="calcAppend('/')" class="secondary" style="padding:12px; background:#475569;">÷</button>
+                
+                <button onclick="calcAppend('7')" style="padding:14px; background:#1e293b;">7</button>
+                <button onclick="calcAppend('8')" style="padding:14px; background:#1e293b;">8</button>
+                <button onclick="calcAppend('9')" style="padding:14px; background:#1e293b;">9</button>
+                <button onclick="calcAppend('*')" class="secondary" style="padding:12px; background:#475569;">×</button>
+                
+                <button onclick="calcAppend('4')" style="padding:14px; background:#1e293b;">4</button>
+                <button onclick="calcAppend('5')" style="padding:14px; background:#1e293b;">5</button>
+                <button onclick="calcAppend('6')" style="padding:14px; background:#1e293b;">6</button>
+                <button onclick="calcAppend('-')" class="secondary" style="padding:12px; background:#475569;">-</button>
+                
+                <button onclick="calcAppend('1')" style="padding:14px; background:#1e293b;">1</button>
+                <button onclick="calcAppend('2')" style="padding:14px; background:#1e293b;">2</button>
+                <button onclick="calcAppend('3')" style="padding:14px; background:#1e293b;">3</button>
+                <button onclick="calcAppend('+')" class="secondary" style="padding:12px; background:#475569;">+</button>
+                
+                <button onclick="calcAppend('0')" style="padding:14px; background:#1e293b; grid-column: span 2;">0</button>
+                <button onclick="calcAppend('.')" style="padding:14px; background:#1e293b;">.</button>
+                <button onclick="calcCompute()" class="success" style="padding:14px;">=</button>
+
+                <!-- Scientific Functions -->
+                <button onclick="calcMath('Math.sqrt(')" class="purple" style="padding:10px; font-size:0.85rem;">√x</button>
+                <button onclick="calcMath('**2')" class="purple" style="padding:10px; font-size:0.85rem;">x²</button>
+                <button onclick="calcAppend('1.732')" class="purple" style="padding:10px; font-size:0.85rem;">√3 (1.732)</button>
+                <button onclick="calcAppend('12.9')" class="purple" style="padding:10px; font-size:0.85rem;">K (Cu 12.9)</button>
+              </div>
+            </div>
+
+            <!-- Right Box: Electrical Formulas Quick Reference Pad -->
+            <div class="calc-box">
+              <h4 style="margin-top:0; color:#38bdf8;">📐 Electrical Exam Formulas Reference Pad</h4>
+              <div style="font-size:0.88rem; line-height:1.6; color:#cbd5e1; max-height:360px; overflow-y:auto; padding-right:6px;">
+                <div style="margin-bottom:10px; border-bottom:1px solid #334155; padding-bottom:6px;">
+                  <b>1. Single-Phase Voltage Drop ($V_d$):</b><br>
+                  <code style="color:#60a5fa;">Vd = (2 × K × I × L) / Cmil</code><br>
+                  <span style="font-size:0.8rem; color:var(--muted);">K = 12.9 (Copper) or 21.2 (Aluminum). L = One-way distance in feet.</span>
+                </div>
+
+                <div style="margin-bottom:10px; border-bottom:1px solid #334155; padding-bottom:6px;">
+                  <b>2. Three-Phase Voltage Drop ($V_d$):</b><br>
+                  <code style="color:#60a5fa;">Vd = (1.732 × K × I × L) / Cmil</code>
+                </div>
+
+                <div style="margin-bottom:10px; border-bottom:1px solid #334155; padding-bottom:6px;">
+                  <b>3. Ohm's Law & Single-Phase Power:</b><br>
+                  <code style="color:#60a5fa;">I = E / R  |  P = E × I  |  E = I × R</code><br>
+                  <span style="font-size:0.8rem; color:var(--muted);">For Single Phase VA: <code>VA = E × I</code></span>
+                </div>
+
+                <div style="margin-bottom:10px; border-bottom:1px solid #334155; padding-bottom:6px;">
+                  <b>4. Three-Phase Apparent Power (VA):</b><br>
+                  <code style="color:#60a5fa;">kVA = (1.732 × E × I) / 1000</code>
+                </div>
+
+                <div style="margin-bottom:10px; border-bottom:1px solid #334155; padding-bottom:6px;">
+                  <b>5. Parallel Resistance ($R_T$):</b><br>
+                  <code style="color:#60a5fa;">1 / RT = (1/R1) + (1/R2) + (1/R3) + ...</code>
+                </div>
+
+                <div style="margin-bottom:10px;">
+                  <b>6. Transformer Primary / Secondary Ratios:</b><br>
+                  <code style="color:#60a5fa;">Ep / Es = Is / Ip = Np / Ns</code>
+                </div>
+              </div>
+            </div>
+
           </div>
 
-          <!-- Calc 2: Ampacity Derating (Temperature & Bundling) -->
-          <div class="calc-box">
-            <h4>🌡️ Conductor Ampacity Derating</h4>
-            <label>Base Ampacity ($75^\circ	ext{C}$ Table 310.16):</label><input type="number" id="calcBaseAmp" value="85">
-            <label>Ambient Temp Correction Factor (Table 310.15(B)(1)):</label><input type="number" id="calcTempFactor" value="0.88" step="0.01">
-            <label>Adjustment Factor for Current-Carrying Conductors (Table 310.15(C)(1)):</label><input type="number" id="calcBundleFactor" value="0.80" step="0.01">
-            <button onclick="calculateDerate()" class="success" style="width:100%; margin-top:8px;">Calculate Allowable Ampacity</button>
-            <div id="calcDerateResult" style="margin-top:10px; font-weight:700; color:#60a5fa;"></div>
-          </div>
-
-          <!-- Calc 3: Ohm's Law & Power -->
-          <div class="calc-box">
-            <h4>🔌 Ohm's Law & Power</h4>
-            <label>Voltage (E):</label><input type="number" id="calcOhmsE" value="208">
-            <label>Current (I):</label><input type="number" id="calcOhmsI" value="25">
-            <label>Resistance (R) [Optional]:</label><input type="number" id="calcOhmsR" placeholder="">
-            <button onclick="calculateOhms()" class="success" style="width:100%; margin-top:8px;">Compute P, E, I, R</button>
-            <div id="calcOhmsResult" style="margin-top:10px; font-weight:700; color:#60a5fa;"></div>
-          </div>
-        </div>
-      </div>
+      </div></div>
     </div>
 
     <!-- ================= 5. STATE LAWS SECTION ================= -->
@@ -479,6 +526,37 @@
     renderExamQuestions();
     renderFlashcard();
   });
+
+
+
+  // Scientific Calculator Logic
+  function calcAppend(val) {
+    const d = document.getElementById('calcDisplay');
+    d.value += val;
+  }
+
+  function calcClear() {
+    document.getElementById('calcDisplay').value = '';
+  }
+
+  function calcCompute() {
+    const d = document.getElementById('calcDisplay');
+    try {
+      d.value = eval(d.value);
+    } catch(e) {
+      d.value = 'Error';
+    }
+  }
+
+  function calcMath(fn) {
+    const d = document.getElementById('calcDisplay');
+    if (fn.startsWith('Math.')) {
+      d.value = fn + d.value + ')';
+    } else {
+      d.value += fn;
+    }
+  }
+
 </script>
 </body>
 </html>
