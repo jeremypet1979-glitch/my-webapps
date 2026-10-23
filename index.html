@@ -2950,4 +2950,18 @@ l>
     alert('🔒 Master Admin PIN updated successfully!');
   }
 
+
+
+
+  function switchView(viewName) {
+    document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    const target = document.getElementById(`view-${viewName}`);
+    if (target) target.classList.add('active');
+    const tab = document.querySelector(`.nav-tab[data-view="${viewName}"]`);
+    if (tab) tab.classList.add('active');
+    if (typeof syncGlobalContext === 'function') syncGlobalContext();
+    if (viewName === 'jha' && typeof renderJhaSigs === 'function') setTimeout(renderJhaSigs, 50);
+  }
+
 </script>
