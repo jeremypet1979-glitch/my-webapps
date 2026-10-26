@@ -678,33 +678,114 @@
       </div>
     </div>
 
+    
     <!-- ================= VIEW 4: DAILY JHA ================= -->
     <div id="view-jha" class="view-panel">
       <div class="card">
+        <!-- JHA Excel & Print File Bar -->
+        <div class="app-file-bar no-print">
+          <div class="row">
+            <strong>📊 JHA Excel Log File:</strong>
+            <select id="jhaFileSelect" onchange="selectAppExcelFile('jha', this.value)"><option value="">-- Select JHA Excel --</option></select>
+          </div>
+          <div class="row">
+            <button class="success sm" onclick="promptCreateNewExcel('jha')">➕ New Excel</button>
+            <button class="amber sm" onclick="saveCurrentJhaToExcel()">💾 Save to Excel</button>
+            <button class="outline sm" onclick="window.print()">🖨️ Print 2-Page JHA PDF</button>
+          </div>
+        </div>
+
         <div class="jha-header-box">
           <div class="jha-title-bar">
             <span>DAILY JHA — JOB HAZARD ANALYSIS</span>
-            <span>DAILY SAFETY LOG</span>
+            <span id="jhaJobBadge">DAILY SAFETY LOG</span>
           </div>
           <div style="padding:14px;">
             <div class="grid-3">
-              <input type="date" id="jhaDate">
-              <input type="text" id="jhaShift" placeholder="Shift / Crew">
-              <input type="text" id="jhaSupervisor" placeholder="Supervisor Name">
+              <div class="form-group"><label>Date:</label><input type="date" id="jhaDate"></div>
+              <div class="form-group"><label>Shift / Crew:</label><input type="text" id="jhaShift" placeholder="Shift / Crew"></div>
+              <div class="form-group"><label>Supervisor(s) / Lead:</label><input type="text" id="jhaSupervisor" placeholder="Supervisor Name"></div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group"><label>Employee Names / Dept:</label><input type="text" id="jhaDept" value="Electrical Test & QA Team"></div>
+              <div class="form-group"><label>Task Location (Bay / Skid #):</label><input type="text" id="jhaLocation" placeholder="Test Bay / Skid #"></div>
             </div>
           </div>
-          <div class="jha-section-title"><span>HAZARDS & MITIGATION CONTROLS</span><button class="outline sm no-print" onclick="loadAllDefaultElectricalHazards()">⚡ Load Electrical Set</button></div>
-          <div style="padding:12px 14px;">
-            <table><thead><tr><th>No.</th><th>Task Description</th><th>Hazard</th><th>Mitigation</th><th class="no-print">Del</th></tr></thead><tbody id="jhaTaskBody"></tbody></table>
+
+          <div class="jha-section-title">
+            <span>PRE-TASK SAFETY & LIVE ELECTRICAL READINESS CHECKLIST</span>
           </div>
-          <div style="padding:14px;">
-            <div class="row no-print" style="margin-bottom:10px;">
+          <div style="padding:12px 14px;">
+            <div class="grid-2">
+              <div class="row" style="justify-content:space-between; border-bottom:1px solid #e2e8f0; padding:4px 0;">
+                <span style="font-size:0.85rem;">1. Trained for task (NFPA 70E Qualified)?</span>
+                <select id="q1" style="width:80px;"><option value="Yes">Yes</option><option value="No">No</option></select>
+              </div>
+              <div class="row" style="justify-content:space-between; border-bottom:1px solid #e2e8f0; padding:4px 0;">
+                <span style="font-size:0.85rem;">2. Aware of any prior injury/incident?</span>
+                <select id="q2" style="width:80px;"><option value="No">No</option><option value="Yes">Yes</option></select>
+              </div>
+              <div class="row" style="justify-content:space-between; border-bottom:1px solid #e2e8f0; padding:4px 0;">
+                <span style="font-size:0.85rem;">3. Any physical limitations today?</span>
+                <select id="q3" style="width:80px;"><option value="No">No</option><option value="Yes">Yes</option></select>
+              </div>
+              <div class="row" style="justify-content:space-between; border-bottom:1px solid #e2e8f0; padding:4px 0;">
+                <span style="font-size:0.85rem;">4. Walked work area & inspected test leads/CAT ratings?</span>
+                <select id="q4" style="width:80px;"><option value="Yes">Yes</option><option value="No">No</option></select>
+              </div>
+              <div class="row" style="justify-content:space-between; border-bottom:1px solid #e2e8f0; padding:6px 0;">
+                <span style="font-size:0.85rem;">5. Emergency Action Plan / AED / EPO known?</span>
+                <select id="q5" style="width:90px;"><option value="Yes">Yes</option><option value="No">No</option></select>
+              </div>
+              <div class="row" style="justify-content:space-between; border-bottom:1px solid #e2e8f0; padding:6px 0;">
+                <span style="font-size:0.85rem;">6. Hazardous chemicals / SDS review needed?</span>
+                <select id="q6" style="width:90px;"><option value="No">No</option><option value="Yes">Yes</option></select>
+              </div>
+              <div class="row" style="justify-content:space-between; border-bottom:1px solid #e2e8f0; padding:6px 0;">
+                <span style="font-size:0.85rem;">7. Energized work permits / LOTO in place?</span>
+                <select id="q7" style="width:90px;"><option value="Yes">Yes</option><option value="No">No</option></select>
+              </div>
+              <div class="row" style="justify-content:space-between; border-bottom:1px solid #e2e8f0; padding:6px 0;">
+                <span style="font-size:0.85rem;">8. Safety Watch / Spotter w/ rescue hook stationed?</span>
+                <select id="q8" style="width:90px;"><option value="Yes">Yes</option><option value="No">No</option></select>
+              </div>
+            </div>
+          </div>
+
+          <div class="jha-section-title">
+            <span>TASK DESCRIPTION, HAZARDS & MITIGATION CONTROLS</span>
+            <div class="row">
+              <button type="button" class="outline sm no-print" onclick="loadAllDefaultElectricalHazards()">⚡ Load Electrical Set</button>
+              <button type="button" class="sm no-print" onclick="addBlankJhaRow()">+ Add Row</button>
+            </div>
+          </div>
+          <div style="padding:12px 14px;">
+            <div class="no-print" style="margin-bottom:8px;">
+              <div style="font-size:0.8rem; font-weight:700; color:#475569; margin-bottom:4px;">➕ Click preset hazard to add:</div>
+              <div class="preset-pills" id="hazardPresetPills"></div>
+            </div>
+            <table><thead><tr><th style="width:40px;">No.</th><th>Task Description</th><th>Hazard Associated w/ Tasks</th><th>Mitigation Controls / PPE</th><th class="no-print" style="width:45px;">Del</th></tr></thead><tbody id="jhaTaskBody"></tbody></table>
+          </div>
+
+          <div style="padding: 0 14px 14px 14px;">
+            <div class="stop-work-banner">
+              <span style="font-size:1.5rem;">🛑</span>
+              <div>
+                STOP WORK AUTHORITY: Stop immediately if Fall Protection, Unexpected Energies, LOTO/Barricade Breaches, or Defective Test Leads are encountered.
+              </div>
+            </div>
+
+            <div class="row no-print" style="margin-top:10px; margin-bottom:10px;">
               <input type="text" id="crewPrintName" placeholder="Employee Full Name" style="flex:1;">
-              <input type="text" id="crewRole" placeholder="Role" style="width:120px;">
-              <button class="success sm" onclick="addCrewMemberToRoster()">+ Add Crew</button>
+              <input type="text" id="crewRole" placeholder="Role / Badge #" style="width:140px;">
+              <button type="button" class="success sm" onclick="addCrewMemberToRoster()">+ Add Crew Member</button>
             </div>
             <div id="crewCardsContainer" class="no-print"></div>
-            <table><thead><tr><th>#</th><th>Technician Name</th><th>Signature</th><th class="no-print">Del</th></tr></thead><tbody id="jhaSigBody"></tbody></table>
+
+            <table>
+              <thead><tr><th style="width:50px;">#</th><th>Print Employee / Technician Name</th><th>Signature / Acknowledgment</th><th class="no-print" style="width:50px;">Del</th></tr></thead>
+              <tbody id="jhaSigBody"></tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -875,9 +956,6 @@
   </div>
 
 <script>
-  // =========================================================================
-  // GLOBAL STATE & DATA STORES
-  // =========================================================================
   let workspaceDirHandle = null;
   let folderExcelFiles = [];
   const appFileHandles = { qr: null, comp: null, test: null, jha: null };
@@ -890,17 +968,14 @@
     jhaSigs: JSON.parse(localStorage.getItem('portal_jha_sigs') || '[]')
   };
 
-  // =========================================================================
-  // LOGIN & AUTHENTICATION
-  // =========================================================================
-  let portalSettings = JSON.parse(localStorage.getItem('portal_security_settings') || '{"masterPin": "0522", "allowedUsers": [{"name": "Jeremy", "pin": "0522"}]}');
+  let portalSettings = {"masterPin": "0522", "allowedUsers": [{"name": "Jeremy", "pin": "0522"}]};
 
   function verifyPortalLogin() {
     const inputField = document.getElementById('loginPinInput');
     const val = inputField ? inputField.value.trim() : '';
-    if (val === '0522' || val === portalSettings.masterPin || (portalSettings.allowedUsers && portalSettings.allowedUsers.some(u => u.pin === val))) {
+    if (val === '0522' || val === portalSettings.masterPin) {
       document.getElementById('loginOverlay').style.display = 'none';
-      showToast('🔓 Welcome! Access granted.', 'success');
+      alert('🔓 Welcome! Access granted.');
     } else {
       alert('❌ Access Denied: Invalid PIN. Please enter 0522.');
       if (inputField) { inputField.value = ''; inputField.focus(); }
@@ -919,7 +994,7 @@
     if (target) target.classList.add('active');
     const tab = document.querySelector(`.nav-tab[data-view="${viewName}"]`);
     if (tab) tab.classList.add('active');
-    if (viewName === 'jha') renderJhaTasks();
+    if (viewName === 'jha') { renderJhaTasks(); renderJhaSigs(); }
   }
 
   function showToast(msg, type='success') {
@@ -933,9 +1008,7 @@
 
   function syncGlobalContext() {}
 
-  // =========================================================================
-  // FOLDER AUTO-DISCOVERY & EXCEL LINKING
-  // =========================================================================
+  // Folder linking API
   async function connectWorkspaceFolder() {
     if (!window.showDirectoryPicker) {
       showToast('Folder auto-discovery requires Chrome or Edge on desktop.', 'warn');
@@ -996,33 +1069,58 @@
     }
   }
 
+
   // =========================================================================
-  // JHA SAFETY BUILDER LOGIC
+  // JHA SAFETY BUILDER & SIGNATURE PADS LOGIC
   // =========================================================================
   const INDUSTRIAL_ELECTRICAL_HAZARDS = [
     {
-      short: "⚡ Live Voltage Probing",
-      task: "Live Voltage Verification & Phase Rotation Testing (480VAC / 240VAC / 120VAC)",
-      hazard: "Electric shock, electrocution, or accidental short with meter probes",
-      mitigation: "Verify CAT III/IV meter leads via Live-Dead-Live test; wear Class 0/00 voltage-rated gloves w/ leather protectors & safety glasses."
+      short: "⚡ Live Voltage Probing (480V/240V/120V)",
+      task: "Live Voltage Verification & Phase Rotation Testing (480VAC / 240VAC / 120VAC / 24VDC)",
+      hazard: "Electric shock, electrocution, or accidental phase-to-phase / phase-to-ground short with meter probes",
+      mitigation: "Verify CAT III/IV 1000V meter & fused leads via Live-Dead-Live test; wear Class 0/00 voltage-rated gloves w/ leather protectors & safety glasses."
     },
     {
-      short: "🔥 Arc Flash / Cabinet Entry",
-      task: "Opening Energized Control Panels / Switchgear for Live PLC Checkout",
-      hazard: "Arc flash thermal burns, arc blast pressure wave, flying shrapnel",
-      mitigation: "Establish Limited & Restricted Approach Boundaries; wear Arc-Rated (AR) FR clothing, face shield & balaclava."
+      short: "🔥 Arc Flash / Energized Cabinet Entry",
+      task: "Opening Energized Control Panels / Switchgear for Live Functional & PLC Checkout",
+      hazard: "Arc flash thermal burns, arc blast pressure wave, flying molten metal/shrapnel",
+      mitigation: "Establish Limited & Restricted Approach Boundaries; post high-voltage barricades/warning tape; wear required Arc-Rated (AR) FR clothing, face shield, balaclava & hearing protection."
     },
     {
-      short: "🔌 Megger Insulation Testing",
+      short: "🔌 Hi-Pot / Megger Insulation Testing",
       task: "Dielectric Withstand (Hi-Pot) & Megohmmeter Insulation Resistance Testing",
-      hazard: "High-voltage DC injection shock and residual capacitive stored charge",
-      mitigation: "Rope off test area with flashing beacon; discharge cables to ground with rated discharge stick before handling."
+      hazard: "High-voltage DC injection shock and residual capacitive stored charge on cables/buses after test",
+      mitigation: "Isolate sensitive electronics; rope off test area with flashing beacon; discharge cables to ground with rated discharge stick before handling."
     },
     {
-      short: "🔒 LOTO & Stored Energy",
-      task: "Wiring Modifications and Component Replacement Between Live Tests",
-      hazard: "Unexpected re-energization or VFD DC bus capacitor stored energy",
-      mitigation: "Apply personal LOTO at main disconnect; wait 5-10 mins for VFD capacitor discharge; verify Zero Energy (0V) with meter."
+      short: "🔒 LOTO & Stored Energy (Capacitors/VFDs)",
+      task: "Wiring Modifications, Component Replacement & Troubleshooting Between Live Tests",
+      hazard: "Unexpected re-energization, VFD DC bus capacitor stored energy, pneumatic/hydraulic trapped pressure",
+      mitigation: "Apply personal Lockout/Tagout (LOTO) at main disconnect; wait 5–10 mins for VFD DC bus discharge; verify Zero Energy State (0V) before touching conductors."
+    },
+    {
+      short: "🔄 Backfeed & Control Transformer Hazards",
+      task: "Energizing Control Circuits / 120VAC Foreign Voltage / Back-Fed Transformers",
+      hazard: "Step-up backfeed energizing primary 480V bus unexpectedly when powering secondary 120V control circuit",
+      mitigation: "Physically open primary fuses/breakers and verify schematic isolation before applying external test power."
+    },
+    {
+      short: "⚙️ Rotating Machinery & Motor Bump Test",
+      task: "Motor Rotation Bump Testing, Actuator Stroke Testing & Conveyor/Pump Run-In",
+      hazard: "Pinch/crush points, entanglement in couplings/fans, sudden mechanical startup",
+      mitigation: "Verify all machine guards are installed; clear personnel from skid before bumping motors; keep hands clear of valves/actuators and test E-Stop circuit first."
+    },
+    {
+      short: "🏗️ Overhead Crane / Forklift Skid Movement",
+      task: "Rigging, Lifting & Positioning Heavy Electrical Skids / Enclosures into Test Bay",
+      hazard: "Dropped load, crushed limbs, swinging skid impact, pinch points",
+      mitigation: "Inspect slings/shackles prior to lift; never stand under suspended loads; use taglines and designated spotter."
+    },
+    {
+      short: "🔊 Shop Floor Slips, Trips & High Noise",
+      task: "Routing Temporary Test Feeder Cables, Air Hoses & Working in Manufacturing Plant",
+      hazard: "Tripping over temporary 480V test umbilical cables, sharp sheet-metal edges, high decibel noise",
+      mitigation: "Use cable ramps/ overhead hooks for test feeders; maintain clean 36-inch clearance in front of live panels; wear cut-resistant gloves & hearing protection."
     }
   ];
 
@@ -1031,17 +1129,16 @@
     if (!container) return;
     container.innerHTML = '';
     INDUSTRIAL_ELECTRICAL_HAZARDS.forEach(p => {
-      container.innerHTML += `<span class="preset-pill" onclick="addJhaPreset('${p.short}')">${p.short}</span>`;
+      const btn = document.createElement('span');
+      btn.className = 'preset-pill';
+      btn.textContent = p.short;
+      btn.onclick = () => {
+        appData.jhaTasks.push({ Task: p.task, Hazard: p.hazard, Mitigation: p.mitigation });
+        renderJhaTasks();
+        saveLocalBackup();
+      };
+      container.appendChild(btn);
     });
-  }
-
-  function addJhaPreset(shortName) {
-    const p = INDUSTRIAL_ELECTRICAL_HAZARDS.find(x => x.short === shortName);
-    if (p) {
-      appData.jhaTasks.push({ Task: p.task, Hazard: p.hazard, Mitigation: p.mitigation });
-      renderJhaTasks();
-      saveLocalBackup();
-    }
   }
 
   function loadAllDefaultElectricalHazards() {
@@ -1050,7 +1147,7 @@
     }));
     renderJhaTasks();
     saveLocalBackup();
-    showToast('⚡ Loaded electrical safety hazard set.', 'success');
+    showToast('⚡ Loaded all 8 Industrial & Electrical Testing hazard rows.', 'success');
   }
 
   function addBlankJhaRow() {
@@ -1075,15 +1172,163 @@
     });
   }
 
+  function addCrewMemberToRoster() {
+    const nameInput = document.getElementById('crewPrintName');
+    const roleInput = document.getElementById('crewRole');
+    const name = nameInput ? nameInput.value.trim() : '';
+    const role = roleInput ? roleInput.value.trim() : '';
+
+    if (!name) {
+      alert('Please enter the employee or technician name.');
+      if (nameInput) nameInput.focus();
+      return;
+    }
+
+    const fullName = role ? `${name} (${role})` : name;
+    appData.jhaSigs.push({
+      PrintName: fullName,
+      SignatureImage: '',
+      hasDrawn: false
+    });
+
+    if (nameInput) nameInput.value = '';
+    if (roleInput) roleInput.value = '';
+    renderJhaSigs();
+    saveLocalBackup();
+    showToast(`Added ${fullName} to JHA Crew Roster.`, 'success');
+  }
+
+  function initSignaturePads() {
+    appData.jhaSigs.forEach((crew, idx) => {
+      const canvas = document.getElementById(`crewCanvas_${idx}`);
+      if (!canvas || crew.SignatureImage) return;
+      const ctx = canvas.getContext('2d');
+
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width > 0 && canvas.width !== Math.floor(rect.width)) {
+        canvas.width = Math.floor(rect.width);
+        canvas.height = 110;
+      }
+
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 2.4;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      let isDrawing = false;
+      let hasDrawn = false;
+
+      function getPos(e) {
+        const r = canvas.getBoundingClientRect();
+        const sx = canvas.width / r.width;
+        const sy = canvas.height / r.height;
+        const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+        const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+        return { x: (clientX - r.left) * sx, y: (clientY - r.top) * sy };
+      }
+
+      function start(e) { isDrawing = true; hasDrawn = true; const pos = getPos(e); ctx.beginPath(); ctx.moveTo(pos.x, pos.y); e.preventDefault(); }
+      function move(e) { if (!isDrawing) return; const pos = getPos(e); ctx.lineTo(pos.x, pos.y); ctx.stroke(); e.preventDefault(); }
+      function end(e) { if (!isDrawing) return; isDrawing = false; ctx.closePath(); crew.hasDrawn = hasDrawn; }
+
+      canvas.onmousedown = start;
+      window.onmousemove = e => { if (isDrawing) move(e); };
+      window.onmouseup = e => { if (isDrawing) end(e); };
+      canvas.ontouchstart = e => start(e);
+      canvas.ontouchmove = e => move(e);
+      canvas.ontouchend = e => end(e);
+    });
+  }
+
+  function clearCrewPad(idx) {
+    const canvas = document.getElementById(`crewCanvas_${idx}`);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    appData.jhaSigs[idx].hasDrawn = false;
+  }
+
+  function saveCrewSignature(idx) {
+    const crew = appData.jhaSigs[idx];
+    const canvas = document.getElementById(`crewCanvas_${idx}`);
+    if (!canvas) return;
+    if (!crew.hasDrawn) {
+      alert(`Please sign in the box for ${crew.PrintName} first.`);
+      return;
+    }
+    crew.SignatureImage = canvas.toDataURL('image/png');
+    renderJhaSigs();
+    saveLocalBackup();
+    showToast(`✍️ Saved signature for ${crew.PrintName}!`, 'success');
+  }
+
+  function renderJhaSigs() {
+    const container = document.getElementById('crewCardsContainer');
+    if (container) {
+      if (appData.jhaSigs.length === 0) {
+        container.innerHTML = '<div style="font-style:italic; color:#64748b; padding:8px 0;">No crew members added yet. Type a name above to add someone to the roster.</div>';
+      } else {
+        container.innerHTML = '';
+        appData.jhaSigs.forEach((crew, idx) => {
+          const card = document.createElement('div');
+          card.className = 'crew-card';
+          if (crew.SignatureImage) {
+            card.innerHTML = `
+              <div class="crew-card-header">
+                <span>${idx + 1}. <strong>${crew.PrintName}</strong></span>
+                <div class="row">
+                  <span class="signed-badge">✅ Signed</span>
+                  <button type="button" class="outline sm no-print" onclick="appData.jhaSigs[${idx}].SignatureImage=''; renderJhaSigs();">✏️ Re-sign</button>
+                  <button type="button" class="danger sm no-print" onclick="appData.jhaSigs.splice(${idx},1); renderJhaSigs(); saveLocalBackup();">✕</button>
+                </div>
+              </div>
+              <div style="background:#fff; padding:6px; border-radius:6px; border:1px solid #cbd5e1; display:inline-block;">
+                <img src="${crew.SignatureImage}" class="sig-img-preview" alt="Signature">
+              </div>
+            `;
+          } else {
+            card.innerHTML = `
+              <div class="crew-card-header">
+                <span>${idx + 1}. <strong>${crew.PrintName}</strong> (Ready to sign)</span>
+                <button type="button" class="danger sm no-print" onclick="appData.jhaSigs.splice(${idx},1); renderJhaSigs(); saveLocalBackup();">Remove</button>
+              </div>
+              <div class="sig-pad-container">
+                <canvas id="crewCanvas_${idx}" class="crew-sig-canvas" width="500" height="110"></canvas>
+                <div class="sig-baseline">✍️ ${crew.PrintName} — Sign above line with finger or stylus</div>
+              </div>
+              <div class="row" style="justify-content:space-between; margin-top:8px;" class="no-print">
+                <button type="button" class="outline sm" onclick="clearCrewPad(${idx})">🧹 Clear</button>
+                <button type="button" class="success sm" onclick="saveCrewSignature(${idx})">✍️ Confirm & Save Signature</button>
+              </div>
+            `;
+          }
+          container.appendChild(card);
+        });
+        setTimeout(initSignaturePads, 50);
+      }
+    }
+
+    const tb = document.getElementById('jhaSigBody');
+    if (tb) {
+      tb.innerHTML = '';
+      appData.jhaSigs.forEach((s, idx) => {
+        const sigCellHtml = s.SignatureImage
+          ? `<img src="${s.SignatureImage}" class="sig-img-preview" alt="Signature">`
+          : `<span style="color:#dc2626; font-style:italic; font-size:0.85rem;">⏳ Pending Signature</span>`;
+        tb.innerHTML += `<tr><td>${idx + 1}</td><td><strong>${s.PrintName}</strong></td><td>${sigCellHtml}</td><td class="no-print"><button class="danger sm" onclick="appData.jhaSigs.splice(${idx},1); renderJhaSigs(); saveLocalBackup();">✕</button></td></tr>`;
+      });
+    }
+  }
+
   function saveLocalBackup() {
     try {
       localStorage.setItem('portal_jha_tasks', JSON.stringify(appData.jhaTasks));
+      localStorage.setItem('portal_jha_sigs', JSON.stringify(appData.jhaSigs));
     } catch(e) {}
   }
 
-  // =========================================================================
-  // STUDY GUIDE & EXAM SIMULATOR LOGIC
-  // =========================================================================
+
+  // Study Guide Logic
   function switchStudyTab(tabName) {
     document.querySelectorAll('.stu-content').forEach(c => c.style.display = 'none');
     document.querySelectorAll('#view-study .nav-pill').forEach(p => p.classList.remove('active'));
@@ -1166,9 +1411,34 @@
     try { d.value = eval(d.value); } catch(e) { d.value = 'Error'; }
   }
 
-  // =========================================================================
-  // INIT ON DOM LOAD
-  // =========================================================================
+  // Punchlist & Cable Test stubs
+  let punchlistPages = JSON.parse(localStorage.getItem('portal_punchlist_pages') || '[{"pageTitle": "Testing Punch List - Page 1", "items": [{},{},{},{},{}]}]');
+  function renderPunchlistPages() {
+    const container = document.getElementById('punchlistPagesContainer');
+    if (!container) return;
+    container.innerHTML = '';
+    const insp = document.getElementById('plInspector') ? document.getElementById('plInspector').value : '';
+    const sup = document.getElementById('plSupervisor') ? document.getElementById('plSupervisor').value : '';
+    punchlistPages.forEach((page, pageIdx) => {
+      let itemsHtml = '';
+      page.items.forEach((item, rowIdx) => {
+        itemsHtml += `<tr><td style="text-align:center; font-weight:700;">${rowIdx + 1}</td><td><input class="inline-edit" value="${item.inspector || insp}"></td><td><input class="inline-edit" value="${item.supervisor || sup}"></td><td><input class="inline-edit" value="${item.issue || ''}"></td><td><input class="inline-edit" style="width:80px;" value="${item.correctedBy || ''}"></td><td><input class="inline-edit" type="date" value="${item.correctedDate || ''}"></td><td><input class="inline-edit" style="width:80px;" value="${item.reinspectBy || ''}"></td></tr>`;
+      });
+      container.innerHTML += `<div class="card"><strong>${page.pageTitle}</strong><table><thead><tr><th>Item</th><th>Inspector</th><th>Supervisor</th><th>Issue</th><th>By</th><th>Date</th><th>Reinspect</th></tr></thead><tbody>${itemsHtml}</tbody></table></div>`;
+    });
+  }
+
+  let cableTestItems = JSON.parse(localStorage.getItem('portal_cable_test_items') || '[{},{},{},{}]');
+  function addCableTestRow() { cableTestItems.push({}); renderCableTestTable(); }
+  function renderCableTestTable() {
+    const tb = document.getElementById('cableTestTableBody');
+    if (!tb) return;
+    tb.innerHTML = '';
+    cableTestItems.forEach((item, idx) => {
+      tb.innerHTML += `<tr><td>${idx+1}</td><td><input class="inline-edit" value="${item.from||''}"></td><td><input class="inline-edit" value="${item.to||''}"></td><td><input class="inline-edit" value="${item.phase||''}"></td><td><input class="inline-edit" value="${item.size||''}"></td><td><input class="inline-edit" value="${item.type||''}"></td><td><input class="inline-edit" value="${item.resistance||''}"></td><td><button class="danger sm" onclick="cableTestItems.splice(${idx},1); renderCableTestTable();">✕</button></td></tr>`;
+    });
+  }
+
   window.addEventListener('DOMContentLoaded', () => {
     const d = document.getElementById('plDate');
     if (d && !d.value) d.value = new Date().toISOString().split('T')[0];
@@ -1183,6 +1453,9 @@
     renderHazardPresetPills();
     renderFlashcard();
     renderStudyExam();
+    renderPunchlistPages();
+    renderCableTestTable();
+    renderJhaSigs();
   });
 </script>
 </body>
