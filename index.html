@@ -875,14 +875,32 @@
   </div>
 
 <script>
-  let portalSettings = {"masterPin": "0522", "allowedUsers": [{"name": "Jeremy", "pin": "0522"}]};
+  // =========================================================================
+  // GLOBAL STATE & DATA STORES
+  // =========================================================================
+  let workspaceDirHandle = null;
+  let folderExcelFiles = [];
+  const appFileHandles = { qr: null, comp: null, test: null, jha: null };
+
+  const appData = {
+    qr: JSON.parse(localStorage.getItem('portal_qr_data') || '[]'),
+    comp: JSON.parse(localStorage.getItem('portal_comp_data') || '[]'),
+    test: JSON.parse(localStorage.getItem('portal_test_data') || '[]'),
+    jhaTasks: JSON.parse(localStorage.getItem('portal_jha_tasks') || '[]'),
+    jhaSigs: JSON.parse(localStorage.getItem('portal_jha_sigs') || '[]')
+  };
+
+  // =========================================================================
+  // LOGIN & AUTHENTICATION
+  // =========================================================================
+  let portalSettings = JSON.parse(localStorage.getItem('portal_security_settings') || '{"masterPin": "0522", "allowedUsers": [{"name": "Jeremy", "pin": "0522"}]}');
 
   function verifyPortalLogin() {
     const inputField = document.getElementById('loginPinInput');
     const val = inputField ? inputField.value.trim() : '';
-    if (val === '0522' || val === portalSettings.masterPin) {
+    if (val === '0522' || val === portalSettings.masterPin || (portalSettings.allowedUsers && portalSettings.allowedUsers.some(u => u.pin === val))) {
       document.getElementById('loginOverlay').style.display = 'none';
-      alert('🔓 Welcome! Access granted.');
+      showToast('🔓 Welcome! Access granted.', 'success');
     } else {
       alert('❌ Access Denied: Invalid PIN. Please enter 0522.');
       if (inputField) { inputField.value = ''; inputField.focus(); }
@@ -901,72 +919,174 @@
     if (target) target.classList.add('active');
     const tab = document.querySelector(`.nav-tab[data-view="${viewName}"]`);
     if (tab) tab.classList.add('active');
+    if (viewName === 'jha') renderJhaTasks();
   }
 
-  // Basic storage / render stubs to ensure zero runtime errors
-  function showToast(msg) { alert(msg); }
+  function showToast(msg, type='success') {
+    const b = document.getElementById('toastBanner');
+    if (!b) return;
+    b.textContent = msg;
+    b.className = `toast-${type}`;
+    b.style.display = 'block';
+    setTimeout(() => { b.style.display = 'none'; }, 4000);
+  }
+
   function syncGlobalContext() {}
 
-  // Punchlist logic
-  let punchlistPages = JSON.parse(localStorage.getItem('portal_punchlist_pages') || '[{"pageTitle": "Testing Punch List - Page 1", "items": [{},{},{},{},{}]}]');
-  window.addEventListener('DOMContentLoaded', () => {
-    const d = document.getElementById('plDate');
-    if (d && !d.value) d.value = new Date().toISOString().split('T')[0];
-    const jd = document.getElementById('jhaDate');
-    if (jd && !jd.value) jd.value = new Date().toISOString().split('T')[0];
-    renderPunchlistPages();
-    renderCableTestTable();
-  });
+  // =========================================================================
+  // FOLDER AUTO-DISCOVERY & EXCEL LINKING
+  // =========================================================================
+  async function connectWorkspaceFolder() {
+    if (!window.showDirectoryPicker) {
+      showToast('Folder auto-discovery requires Chrome or Edge on desktop.', 'warn');
+      return;
+    }
+    try {
+      workspaceDirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+      document.getElementById('folderBanner').classList.add('connected');
+      document.getElementById('folderDot').classList.add('live');
+      document.getElementById('refreshFolderBtn').style.display = 'inline-flex';
+      await refreshFolderFiles();
+      showToast(`✅ Connected to folder "${workspaceDirHandle.name}"!`, 'success');
+    } catch (err) {
+      if (err.name !== 'AbortError') showToast('Could not link folder: ' + err.message, 'error');
+    }
+  }
 
-  function renderPunchlistPages() {
-    const container = document.getElementById('punchlistPagesContainer');
+  async function refreshFolderFiles() {
+    if (!workspaceDirHandle) return;
+    folderExcelFiles = [];
+    for await (const entry of workspaceDirHandle.values()) {
+      if (entry.kind === 'file' && /\.(xlsx|xls|csv)$/i.test(entry.name) && !entry.name.startsWith('~$')) {
+        folderExcelFiles.push({ name: entry.name, handle: entry });
+      }
+    }
+    folderExcelFiles.sort((a, b) => a.name.localeCompare(b.name));
+    document.getElementById('folderStatusText').innerHTML = `<strong>Folder Connected: <u>${workspaceDirHandle.name}</u> (${folderExcelFiles.length} Excel files found)</strong>`;
+    
+    ['qrFileSelect', 'compFileSelect', 'testFileSelect', 'jhaFileSelect'].forEach(selId => {
+      const sel = document.getElementById(selId);
+      if (!sel) return;
+      sel.innerHTML = '<option value="">-- Select Excel File --</option>';
+      folderExcelFiles.forEach(f => {
+        sel.innerHTML += `<option value="${f.name}">📊 ${f.name}</option>`;
+      });
+    });
+  }
+
+  async function selectAppExcelFile(appKey, fileName) {
+    if (!fileName) return;
+    const found = folderExcelFiles.find(f => f.name === fileName);
+    if (found) appFileHandles[appKey] = found.handle;
+  }
+
+  async function promptCreateNewExcel(appKey) {
+    const nameInput = prompt('Enter new Excel spreadsheet file name:', 'Job_Log.xlsx');
+    if (!nameInput) return;
+    const cleanName = nameInput.endsWith('.xlsx') ? nameInput : `${nameInput}.xlsx`;
+    if (workspaceDirHandle) {
+      try {
+        const handle = await workspaceDirHandle.getFileHandle(cleanName, { create: true });
+        appFileHandles[appKey] = handle;
+        await refreshFolderFiles();
+        showToast(`✅ Created and linked "${cleanName}"!`, 'success');
+      } catch (e) {
+        showToast('Error creating file: ' + e.message, 'error');
+      }
+    }
+  }
+
+  // =========================================================================
+  // JHA SAFETY BUILDER LOGIC
+  // =========================================================================
+  const INDUSTRIAL_ELECTRICAL_HAZARDS = [
+    {
+      short: "⚡ Live Voltage Probing",
+      task: "Live Voltage Verification & Phase Rotation Testing (480VAC / 240VAC / 120VAC)",
+      hazard: "Electric shock, electrocution, or accidental short with meter probes",
+      mitigation: "Verify CAT III/IV meter leads via Live-Dead-Live test; wear Class 0/00 voltage-rated gloves w/ leather protectors & safety glasses."
+    },
+    {
+      short: "🔥 Arc Flash / Cabinet Entry",
+      task: "Opening Energized Control Panels / Switchgear for Live PLC Checkout",
+      hazard: "Arc flash thermal burns, arc blast pressure wave, flying shrapnel",
+      mitigation: "Establish Limited & Restricted Approach Boundaries; wear Arc-Rated (AR) FR clothing, face shield & balaclava."
+    },
+    {
+      short: "🔌 Megger Insulation Testing",
+      task: "Dielectric Withstand (Hi-Pot) & Megohmmeter Insulation Resistance Testing",
+      hazard: "High-voltage DC injection shock and residual capacitive stored charge",
+      mitigation: "Rope off test area with flashing beacon; discharge cables to ground with rated discharge stick before handling."
+    },
+    {
+      short: "🔒 LOTO & Stored Energy",
+      task: "Wiring Modifications and Component Replacement Between Live Tests",
+      hazard: "Unexpected re-energization or VFD DC bus capacitor stored energy",
+      mitigation: "Apply personal LOTO at main disconnect; wait 5-10 mins for VFD capacitor discharge; verify Zero Energy (0V) with meter."
+    }
+  ];
+
+  function renderHazardPresetPills() {
+    const container = document.getElementById('hazardPresetPills');
     if (!container) return;
     container.innerHTML = '';
-    const insp = document.getElementById('plInspector') ? document.getElementById('plInspector').value : '';
-    const sup = document.getElementById('plSupervisor') ? document.getElementById('plSupervisor').value : '';
+    INDUSTRIAL_ELECTRICAL_HAZARDS.forEach(p => {
+      container.innerHTML += `<span class="preset-pill" onclick="addJhaPreset('${p.short}')">${p.short}</span>`;
+    });
+  }
 
-    punchlistPages.forEach((page, pageIdx) => {
-      let itemsHtml = '';
-      page.items.forEach((item, rowIdx) => {
-        itemsHtml += `
-          <tr>
-            <td style="text-align:center; font-weight:700;">${rowIdx + 1}</td>
-            <td><input class="inline-edit" value="${item.inspector || insp}" placeholder="Inspector"></td>
-            <td><input class="inline-edit" value="${item.supervisor || sup}" placeholder="Supervisor"></td>
-            <td><input class="inline-edit" value="${item.issue || ''}" placeholder="Issue..."></td>
-            <td><input class="inline-edit" style="width:80px;" value="${item.correctedBy || ''}" placeholder="Init"></td>
-            <td><input class="inline-edit" type="date" value="${item.correctedDate || ''}"></td>
-            <td><input class="inline-edit" style="width:80px;" value="${item.reinspectBy || ''}" placeholder="Init"></td>
-          </tr>
-        `;
-      });
-      container.innerHTML += `
-        <div class="card">
-          <strong>${page.pageTitle}</strong>
-          <table><thead><tr><th>Item</th><th>Inspector</th><th>Supervisor</th><th>Issue</th><th>By</th><th>Date</th><th>Reinspect</th></tr></thead><tbody>${itemsHtml}</tbody></table>
-        </div>
+  function addJhaPreset(shortName) {
+    const p = INDUSTRIAL_ELECTRICAL_HAZARDS.find(x => x.short === shortName);
+    if (p) {
+      appData.jhaTasks.push({ Task: p.task, Hazard: p.hazard, Mitigation: p.mitigation });
+      renderJhaTasks();
+      saveLocalBackup();
+    }
+  }
+
+  function loadAllDefaultElectricalHazards() {
+    appData.jhaTasks = INDUSTRIAL_ELECTRICAL_HAZARDS.map(p => ({
+      Task: p.task, Hazard: p.hazard, Mitigation: p.mitigation
+    }));
+    renderJhaTasks();
+    saveLocalBackup();
+    showToast('⚡ Loaded electrical safety hazard set.', 'success');
+  }
+
+  function addBlankJhaRow() {
+    appData.jhaTasks.push({ Task: '', Hazard: '', Mitigation: '' });
+    renderJhaTasks();
+  }
+
+  function renderJhaTasks() {
+    const tb = document.getElementById('jhaTaskBody');
+    if (!tb) return;
+    tb.innerHTML = '';
+    appData.jhaTasks.forEach((row, idx) => {
+      tb.innerHTML += `
+        <tr>
+          <td><strong>${idx + 1}</strong></td>
+          <td><textarea class="inline-edit" onchange="appData.jhaTasks[${idx}].Task=this.value; saveLocalBackup();">${row.Task || ''}</textarea></td>
+          <td><textarea class="inline-edit" onchange="appData.jhaTasks[${idx}].Hazard=this.value; saveLocalBackup();">${row.Hazard || ''}</textarea></td>
+          <td><textarea class="inline-edit" onchange="appData.jhaTasks[${idx}].Mitigation=this.value; saveLocalBackup();">${row.Mitigation || ''}</textarea></td>
+          <td class="no-print"><button class="danger sm" onclick="appData.jhaTasks.splice(${idx},1); renderJhaTasks(); saveLocalBackup();">✕</button></td>
+        </tr>
       `;
     });
   }
 
-  // Cable test logic
-  let cableTestItems = JSON.parse(localStorage.getItem('portal_cable_test_items') || '[{},{},{},{}]');
-  function addCableTestRow() { cableTestItems.push({}); renderCableTestTable(); }
-  function renderCableTestTable() {
-    const tb = document.getElementById('cableTestTableBody');
-    if (!tb) return;
-    tb.innerHTML = '';
-    cableTestItems.forEach((item, idx) => {
-      tb.innerHTML += `<tr><td>${idx+1}</td><td><input class="inline-edit" value="${item.from||''}"></td><td><input class="inline-edit" value="${item.to||''}"></td><td><input class="inline-edit" value="${item.phase||''}"></td><td><input class="inline-edit" value="${item.size||''}"></td><td><input class="inline-edit" value="${item.type||''}"></td><td><input class="inline-edit" value="${item.resistance||''}"></td><td><button class="danger sm" onclick="cableTestItems.splice(${idx},1); renderCableTestTable();">✕</button></td></tr>`;
-    });
+  function saveLocalBackup() {
+    try {
+      localStorage.setItem('portal_jha_tasks', JSON.stringify(appData.jhaTasks));
+    } catch(e) {}
   }
 
-
-
-  // Study Guide Logic
+  // =========================================================================
+  // STUDY GUIDE & EXAM SIMULATOR LOGIC
+  // =========================================================================
   function switchStudyTab(tabName) {
     document.querySelectorAll('.stu-content').forEach(c => c.style.display = 'none');
-    document.querySelectorAll('#sec-study .nav-pill').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('#view-study .nav-pill').forEach(p => p.classList.remove('active'));
     document.getElementById(`stu-tab-${tabName}`).style.display = 'block';
     event.target.classList.add('active');
   }
@@ -999,11 +1119,13 @@
   const studyExams = {
     journeyman: [
       { q: "1. Minimum clear working space depth in front of a 480V panel (Condition 2)?", opts: ["A) 3 ft", "B) 3.5 ft", "C) 4 ft", "D) 5 ft"], ans: 1, ref: "NEC Table 110.26(A)(1)" },
-      { q: "2. Max allowable ampacity of 3/0 AWG THWN copper at 75°C?", opts: ["A) 175A", "B) 200A", "C) 225A", "D) 250A"], ans: 1, ref: "NEC Table 310.16" }
+      { q: "2. Max allowable ampacity of 3/0 AWG THWN copper at 75°C?", opts: ["A) 175A", "B) 200A", "C) 225A", "D) 250A"], ans: 1, ref: "NEC Table 310.16" },
+      { q: "3. What is the resistance of 1,000 feet of 10 AWG solid copper wire (K=12.9)?", opts: ["A) 0.50 Ω", "B) 1.02 Ω", "C) 1.21 Ω", "D) 2.45 Ω"], ans: 2, ref: "NEC Chapter 9 Table 8" }
     ],
     master: [
       { q: "1. General lighting unit load for an office building under NEC Table 220.12?", opts: ["A) 1.2 VA/sq.ft.", "B) 1.5 VA/sq.ft.", "C) 2.0 VA/sq.ft.", "D) 3.0 VA/sq.ft."], ans: 0, ref: "NEC Table 220.12" },
-      { q: "2. Max primary OCPD rating for a 75 kVA transformer (primary current 90A)?", opts: ["A) 125%", "B) 150%", "C) 250%", "D) 300%"], ans: 2, ref: "NEC Table 450.3(B)" }
+      { q: "2. Max primary OCPD rating for a 75 kVA transformer (primary current 90A)?", opts: ["A) 125%", "B) 150%", "C) 250%", "D) 300%"], ans: 2, ref: "NEC Table 450.3(B)" },
+      { q: "3. What is the minimum size bonding jumper for a water pipe in a commercial facility with 500 kcmil copper service entrance conductors?", opts: ["A) 4 AWG", "B) 2 AWG", "C) 1/0 AWG", "D) 2/0 AWG"], ans: 2, ref: "NEC Table 250.102(C)(1)" }
     ]
   };
 
@@ -1037,7 +1159,6 @@
     alert(`Score: ${score} / ${qs.length}`);
   }
 
-  // Scientific calculator
   function calcAppend(v) { document.getElementById('calcDisplay').value += v; }
   function calcClear() { document.getElementById('calcDisplay').value = ''; }
   function calcCompute() {
@@ -1045,113 +1166,24 @@
     try { d.value = eval(d.value); } catch(e) { d.value = 'Error'; }
   }
 
+  // =========================================================================
+  // INIT ON DOM LOAD
+  // =========================================================================
   window.addEventListener('DOMContentLoaded', () => {
+    const d = document.getElementById('plDate');
+    if (d && !d.value) d.value = new Date().toISOString().split('T')[0];
+    const jd = document.getElementById('jhaDate');
+    if (jd && !jd.value) jd.value = new Date().toISOString().split('T')[0];
+
+    if (appData.jhaTasks.length === 0) {
+      loadAllDefaultElectricalHazards();
+    } else {
+      renderJhaTasks();
+    }
+    renderHazardPresetPills();
     renderFlashcard();
     renderStudyExam();
   });
-
-
-
-
-  const INDUSTRIAL_ELECTRICAL_HAZARDS = [
-    {
-      short: "⚡ Live Voltage Probing (480V/240V/120V)",
-      task: "Live Voltage Verification & Phase Rotation Testing (480VAC / 240VAC / 120VAC / 24VDC)",
-      hazard: "Electric shock, electrocution, or accidental phase-to-phase / phase-to-ground short with meter probes",
-      mitigation: "Verify CAT III/IV 1000V meter & fused leads via Live-Dead-Live test; wear Class 0/00 voltage-rated gloves w/ leather protectors & safety glasses."
-    },
-    {
-      short: "🔥 Arc Flash / Energized Cabinet Entry",
-      task: "Opening Energized Control Panels / Switchgear for Live Functional & PLC Checkout",
-      hazard: "Arc flash thermal burns, arc blast pressure wave, flying molten metal/shrapnel",
-      mitigation: "Establish Limited & Restricted Approach Boundaries; post high-voltage barricades/warning tape; wear required Arc-Rated (AR) FR clothing, face shield, balaclava & hearing protection."
-    },
-    {
-      short: "🔌 Hi-Pot / Megger Insulation Testing",
-      task: "Dielectric Withstand (Hi-Pot) & Megohmmeter Insulation Resistance Testing",
-      hazard: "High-voltage DC injection shock and residual capacitive stored charge on cables/buses after test",
-      mitigation: "Isolate sensitive electronics; rope off test area with flashing beacon; discharge cables to ground with rated discharge stick before handling."
-    },
-    {
-      short: "🔒 LOTO & Stored Energy (Capacitors/VFDs)",
-      task: "Wiring Modifications, Component Replacement & Troubleshooting Between Live Tests",
-      hazard: "Unexpected re-energization, VFD DC bus capacitor stored energy, pneumatic/hydraulic trapped pressure",
-      mitigation: "Apply personal Lockout/Tagout (LOTO) at main disconnect; wait 5–10 mins for VFD DC bus discharge; verify Zero Energy State (0V) before touching conductors."
-    },
-    {
-      short: "🔄 Backfeed & Control Transformer Hazards",
-      task: "Energizing Control Circuits / 120VAC Foreign Voltage / Back-Fed Transformers",
-      hazard: "Step-up backfeed energizing primary 480V bus unexpectedly when powering secondary 120V control circuit",
-      mitigation: "Physically open primary fuses/breakers and verify schematic isolation before applying external test power."
-    },
-    {
-      short: "⚙️ Rotating Machinery & Motor Bump Test",
-      task: "Motor Rotation Bump Testing, Actuator Stroke Testing & Conveyor/Pump Run-In",
-      hazard: "Pinch/crush points, entanglement in couplings/fans, sudden mechanical startup",
-      mitigation: "Verify all machine guards are installed; clear personnel from skid before bumping motors; keep hands clear of valves/actuators and test E-Stop circuit first."
-    },
-    {
-      short: "🏗️ Overhead Crane / Forklift Skid Movement",
-      task: "Rigging, Lifting & Positioning Heavy Electrical Skids / Enclosures into Test Bay",
-      hazard: "Dropped load, crushed limbs, swinging skid impact, pinch points",
-      mitigation: "Inspect slings/shackles prior to lift; never stand under suspended loads; use taglines and designated spotter."
-    },
-    {
-      short: "🔊 Shop Floor Slips, Trips & High Noise",
-      task: "Routing Temporary Test Feeder Cables, Air Hoses & Working in Manufacturing Plant",
-      hazard: "Tripping over temporary 480V test umbilical cables, sharp sheet-metal edges, high decibel noise",
-      mitigation: "Use cable ramps/ overhead hooks for test feeders; maintain clean 36-inch clearance in front of live panels; wear cut-resistant gloves & hearing protection."
-    }
-  ];
-
-  function renderHazardPresetPills() {
-    const container = document.getElementById('hazardPresetPills');
-    if (!container) return;
-    container.innerHTML = '';
-    INDUSTRIAL_ELECTRICAL_HAZARDS.forEach((p) => {
-      const btn = document.createElement('span');
-      btn.className = 'preset-pill';
-      btn.textContent = p.short;
-      btn.onclick = () => {
-        appData.jhaTasks.push({ Task: p.task, Hazard: p.hazard, Mitigation: p.mitigation });
-        renderJhaTasks();
-      };
-      container.appendChild(btn);
-    });
-  }
-
-  function loadAllDefaultElectricalHazards() {
-    appData.jhaTasks = INDUSTRIAL_ELECTRICAL_HAZARDS.map(p => ({
-      Task: p.task,
-      Hazard: p.hazard,
-      Mitigation: p.mitigation
-    }));
-    renderJhaTasks();
-    alert('⚡ Loaded all 8 Industrial & Electrical Testing hazard rows.');
-  }
-
-  function addBlankJhaRow() {
-    appData.jhaTasks.push({ Task: '', Hazard: '', Mitigation: '' });
-    renderJhaTasks();
-  }
-
-  function renderJhaTasks() {
-    const tb = document.getElementById('jhaTaskBody');
-    if (!tb) return;
-    tb.innerHTML = '';
-    appData.jhaTasks.forEach((row, idx) => {
-      tb.innerHTML += `
-        <tr>
-          <td><strong>${idx + 1}</strong></td>
-          <td><textarea class="inline-edit" onchange="appData.jhaTasks[${idx}].Task=this.value">${row.Task || ''}</textarea></td>
-          <td><textarea class="inline-edit" onchange="appData.jhaTasks[${idx}].Hazard=this.value">${row.Hazard || ''}</textarea></td>
-          <td><textarea class="inline-edit" onchange="appData.jhaTasks[${idx}].Mitigation=this.value">${row.Mitigation || ''}</textarea></td>
-          <td class="no-print"><button class="danger sm" onclick="appData.jhaTasks.splice(${idx},1); renderJhaTasks();">✕</button></td>
-        </tr>
-      `;
-    });
-  }
-
 </script>
 </body>
 </html>
