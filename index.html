@@ -507,6 +507,7 @@
     <button class="nav-tab" data-view="jha" onclick="switchView('jha')">⚠️ 4. Daily JHA</button>
     <button class="nav-tab" data-view="punchlist" onclick="switchView('punchlist')">📋 5. Testing Punch List (QC169)</button>
     <button class="nav-tab" data-view="cable" onclick="switchView('cable')">🔌 6. Cable Insulation Test (QC281)</button>
+    <button class="nav-tab" data-view="study" onclick="switchView('study')">📖 7. License Study Guide</button>
   </div>
 
   <div class="main-wrap">
@@ -586,7 +587,19 @@
           </div>
           <div class="row"><button class="amber" onclick="switchView('cable')">▶ Open Cable Report</button></div>
         </div>
-      </div>
+      
+        <!-- App 7: Journeyman & Master Study Guide -->
+        <div class="app-card">
+          <div>
+            <span class="app-tag" style="background:#ede9fe; color:#5b21b6;">Licensing & Prep</span>
+            <h3>7. License Study Guide & Exam</h3>
+            <p>NEC code modules, flashcards, practice exams for Journeyman & Master, and scientific calculator with formula reference.</p>
+          </div>
+          <div class="row">
+            <button class="purple" onclick="switchView('study')">▶ Open Study Guide</button>
+          </div>
+        </div>
+</div>
       <div id="customCardsContainer" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap:18px; margin-top:18px;"></div>
     </div>
 
@@ -719,6 +732,121 @@
       </div>
     </div>
 
+    
+    <!-- ================================================================= -->
+    <!-- VIEW 7: JOURNEYMAN & MASTER STUDY GUIDE & EXAM SIMULATOR          -->
+    <!-- ================================================================= -->
+    <div id="view-study" class="view-panel">
+      <div class="card">
+        <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <h2 style="margin:0;" id="studyExamTitle">📖 Utah Electrical License Study & Test Suite (NEC 2023)</h2>
+          <div class="row">
+            <select id="licenseLevelSelect" onchange="switchLicenseLevel(this.value)" style="width:180px; margin:0; padding:6px;">
+              <option value="journeyman">Journeyman Electrician</option>
+              <option value="master">Master Electrician</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Sub-tabs for Study Suite -->
+        <div class="nav-pills" style="margin-bottom:18px;">
+          <button class="nav-pill active" onclick="switchStudyTab('modules')">📚 Code Modules</button>
+          <button class="nav-pill" onclick="switchStudyTab('flashcards')">💡 Flashcards</button>
+          <button class="nav-pill" onclick="switchStudyTab('exam')">📝 Practice Exam</button>
+          <button class="nav-pill" onclick="switchStudyTab('calc')">🧮 Exam Calculator & Formulas</button>
+          <button class="nav-pill" onclick="switchStudyTab('laws')">⚖️ Utah DOPL Laws</button>
+        </div>
+
+        <!-- Tab 1: Modules -->
+        <div id="stu-tab-modules" class="stu-content">
+          <h3>NEC 2023 Comprehensive Study Modules</h3>
+          <p style="color:var(--muted);">Key code articles and theory essential for Utah journeyman and master exams.</p>
+          <ul>
+            <li><b>Art. 110.26:</b> Working clearances in front of electrical equipment (30" wide, depth based on voltage to ground, 6'6" headroom).</li>
+            <li><b>Art. 210.19(A)(1) / Note 4:</b> Branch circuit voltage drop recommendations (Max 3% branch, 5% total combined).</li>
+            <li><b>Art. 250.50 & Table 250.66:</b> Grounding electrode systems and Grounding Electrode Conductor (GEC) sizing.</li>
+            <li><b>Art. 310.16:</b> Conductor ampacity tables and $75^\circ	ext{C}$ / $90^\circ	ext{C}$ terminal temperature rules.</li>
+            <li><b>Art. 430.250 & Table 430.52:</b> Motor full-load currents and branch-circuit short-circuit protection (Inverse time breakers at 250%).</li>
+          </ul>
+        </div>
+
+        <!-- Tab 2: Flashcards -->
+        <div id="stu-tab-flashcards" class="stu-content" style="display:none;">
+          <h3>Rapid-Fire NEC Code Flashcards</h3>
+          <p style="color:var(--muted);">Click the card to flip between Question and Answer.</p>
+          <div class="flashcard" onclick="flipFlashcard()" style="background:#0f172a; border:2px solid var(--primary); border-radius:12px; padding:30px; text-align:center; min-height:180px; display:flex; flex-direction:column; justify-content:center; align-items:center; cursor:pointer; margin-bottom:16px;">
+            <div id="flashcardContent" style="font-size:1.15rem; font-weight:700;">Loading flashcard...</div>
+            <div style="font-size:0.78rem; color:var(--muted); margin-top:12px;">(Click card to flip)</div>
+          </div>
+          <div class="row" style="justify-content:center; gap:10px;">
+            <button onclick="prevFlashcard()" class="secondary sm">⬅ Previous</button>
+            <button onclick="nextFlashcard()" class="success sm">Next Card ➡</button>
+          </div>
+        </div>
+
+        <!-- Tab 3: Practice Exam -->
+        <div id="stu-tab-exam" class="stu-content" style="display:none;">
+          <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h3 style="margin:0;">Practice Exam Simulator</h3>
+            <button class="success sm" onclick="gradeExam()">📊 Submit & Grade Exam</button>
+          </div>
+          <div id="examQuestionsContainer"></div>
+        </div>
+
+        <!-- Tab 4: Calculator & Formulas -->
+        <div id="stu-tab-calc" class="stu-content" style="display:none;">
+          <h3>Exam Scientific Calculator & Formulas Reference</h3>
+          <div class="calc-grid" style="display:grid; grid-template-columns: 1fr 1.2fr; gap:16px; margin-top:10px;">
+            <div class="calc-box" style="background:#020617; padding:16px; border-radius:8px;">
+              <h4 style="margin-top:0; color:#60a5fa;">🧮 Scientific Calculator</h4>
+              <input type="text" id="calcDisplay" readonly style="background:#0f172a; color:#38bdf8; font-size:1.3rem; text-align:right; margin-bottom:10px; height:45px;">
+              <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:6px;">
+                <button onclick="calcClear()" class="danger sm">C</button>
+                <button onclick="calcAppend('(')" class="secondary sm">(</button>
+                <button onclick="calcAppend(')')" class="secondary sm">)</button>
+                <button onclick="calcAppend('/')" class="secondary sm">÷</button>
+                <button onclick="calcAppend('7')" class="sm">7</button>
+                <button onclick="calcAppend('8')" class="sm">8</button>
+                <button onclick="calcAppend('9')" class="sm">9</button>
+                <button onclick="calcAppend('*')" class="secondary sm">×</button>
+                <button onclick="calcAppend('4')" class="sm">4</button>
+                <button onclick="calcAppend('5')" class="sm">5</button>
+                <button onclick="calcAppend('6')" class="sm">6</button>
+                <button onclick="calcAppend('-')" class="secondary sm">-</button>
+                <button onclick="calcAppend('1')" class="sm">1</button>
+                <button onclick="calcAppend('2')" class="sm">2</button>
+                <button onclick="calcAppend('3')" class="sm">3</button>
+                <button onclick="calcAppend('+')" class="secondary sm">+</button>
+                <button onclick="calcAppend('0')" class="sm" style="grid-column: span 2;">0</button>
+                <button onclick="calcAppend('.')" class="sm">.</button>
+                <button onclick="calcCompute()" class="success sm">=</button>
+              </div>
+            </div>
+            <div class="calc-box" style="background:#f8fafc; border:1px solid var(--border); padding:16px; border-radius:8px; color:#0f172a;">
+              <h4 style="margin-top:0; color:#1e40af;">📐 Electrical Formulas Reference</h4>
+              <div style="font-size:0.85rem; line-height:1.5;">
+                <b>1. Single-Phase Voltage Drop ($V_d$):</b><br><code>Vd = (2 × K × I × L) / Cmil</code><br>
+                <b>2. Three-Phase Voltage Drop ($V_d$):</b><br><code>Vd = (1.732 × K × I × L) / Cmil</code><br>
+                <b>3. Ohm's Law & Power:</b><br><code>I = E / R | P = E × I</code><br>
+                <b>4. Three-Phase Power:</b><br><code>kVA = (1.732 × E × I) / 1000</code>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 5: Utah DOPL Laws -->
+        <div id="stu-tab-laws" class="stu-content" style="display:none;">
+          <h3>Utah DOPL Electrical Licensing Requirements</h3>
+          <ul>
+            <li><b>Journeyman Electrician:</b> Requires 4 years (8,000 hours) of approved apprenticeship experience and 576 classroom hours under a licensed Master Electrician, plus passing the state exam.</li>
+            <li><b>Master Electrician:</b> Requires 2 years of active licensed Journeyman experience.</li>
+            <li><b>Continuing Education:</b> 16 hours required every 2-year licensing cycle (renewing Nov 30 of odd years), with at least 12 hours in Core NEC code updates.</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
     <!-- ================= VIEW 6: QC281 CABLE TEST ================= -->
     <div id="view-cable" class="view-panel">
       <div class="card">
@@ -832,6 +960,96 @@
       tb.innerHTML += `<tr><td>${idx+1}</td><td><input class="inline-edit" value="${item.from||''}"></td><td><input class="inline-edit" value="${item.to||''}"></td><td><input class="inline-edit" value="${item.phase||''}"></td><td><input class="inline-edit" value="${item.size||''}"></td><td><input class="inline-edit" value="${item.type||''}"></td><td><input class="inline-edit" value="${item.resistance||''}"></td><td><button class="danger sm" onclick="cableTestItems.splice(${idx},1); renderCableTestTable();">✕</button></td></tr>`;
     });
   }
+
+
+
+  // Study Guide Logic
+  function switchStudyTab(tabName) {
+    document.querySelectorAll('.stu-content').forEach(c => c.style.display = 'none');
+    document.querySelectorAll('#sec-study .nav-pill').forEach(p => p.classList.remove('active'));
+    document.getElementById(`stu-tab-${tabName}`).style.display = 'block';
+    event.target.classList.add('active');
+  }
+
+  let studyLevel = 'journeyman';
+  function switchLicenseLevel(lvl) {
+    studyLevel = lvl;
+    renderStudyExam();
+  }
+
+  const flashcardList = [
+    { q: "What is the minimum working space depth in front of a 480V panel (Condition 2)?", a: "3.5 feet (42 inches) per NEC Table 110.26(A)(1)" },
+    { q: "What color must the high-leg be identified with on a 3-phase 4-wire delta system?", a: "Orange color marking per NEC 110.15" },
+    { q: "What is the max recommended voltage drop on branch circuits per NEC 210.19(A)?", a: "3% max on branch circuits (5% total combined feeder & branch)" },
+    { q: "What is the direct burial cover requirement for UF cable under a residential lawn?", a: "24 inches minimum per NEC Table 300.5" }
+  ];
+  let fcIdx = 0;
+  let fcAns = false;
+
+  function renderFlashcard() {
+    const el = document.getElementById('flashcardContent');
+    if (!el) return;
+    el.textContent = fcAns ? flashcardList[fcIdx].a : flashcardList[fcIdx].q;
+    el.style.color = fcAns ? '#60a5fa' : '#f8fafc';
+  }
+  function flipFlashcard() { fcAns = !fcAns; renderFlashcard(); }
+  function nextFlashcard() { fcIdx = (fcIdx + 1) % flashcardList.length; fcAns = false; renderFlashcard(); }
+  function prevFlashcard() { fcIdx = (fcIdx - 1 + flashcardList.length) % flashcardList.length; fcAns = false; renderFlashcard(); }
+
+  const studyExams = {
+    journeyman: [
+      { q: "1. Minimum clear working space depth in front of a 480V panel (Condition 2)?", opts: ["A) 3 ft", "B) 3.5 ft", "C) 4 ft", "D) 5 ft"], ans: 1, ref: "NEC Table 110.26(A)(1)" },
+      { q: "2. Max allowable ampacity of 3/0 AWG THWN copper at 75°C?", opts: ["A) 175A", "B) 200A", "C) 225A", "D) 250A"], ans: 1, ref: "NEC Table 310.16" }
+    ],
+    master: [
+      { q: "1. General lighting unit load for an office building under NEC Table 220.12?", opts: ["A) 1.2 VA/sq.ft.", "B) 1.5 VA/sq.ft.", "C) 2.0 VA/sq.ft.", "D) 3.0 VA/sq.ft."], ans: 0, ref: "NEC Table 220.12" },
+      { q: "2. Max primary OCPD rating for a 75 kVA transformer (primary current 90A)?", opts: ["A) 125%", "B) 150%", "C) 250%", "D) 300%"], ans: 2, ref: "NEC Table 450.3(B)" }
+    ]
+  };
+
+  function renderStudyExam() {
+    const container = document.getElementById('examQuestionsContainer');
+    if (!container) return;
+    container.innerHTML = '';
+    const qs = studyExams[studyLevel];
+    qs.forEach((q, idx) => {
+      let opts = '';
+      q.opts.forEach((o, oIdx) => {
+        opts += `<label class="option-label"><input type="radio" name="stu_q_${idx}" value="${oIdx}"> ${o}</label>`;
+      });
+      container.innerHTML += `<div class="exam-question" style="background:#0b0f19; padding:16px; border:1px solid #334155; border-radius:8px; margin-bottom:12px;"><div style="font-weight:700; margin-bottom:8px;">${q.q}</div><div class="options-list">${opts}</div><div id="stu_fb_${idx}" style="margin-top:6px; font-weight:700;"></div></div>`;
+    });
+  }
+
+  function gradeExam() {
+    const qs = studyExams[studyLevel];
+    let score = 0;
+    qs.forEach((q, idx) => {
+      const sel = document.querySelector(`input[name="stu_q_${idx}"]:checked`);
+      const fb = document.getElementById(`stu_fb_${idx}`);
+      if (sel && parseInt(sel.value) === q.ans) {
+        score++;
+        fb.innerHTML = `<span style="color:var(--success);">✅ Correct! Ref: ${q.ref}</span>`;
+      } else {
+        fb.innerHTML = `<span style="color:var(--danger);">❌ Incorrect. Ref: ${q.ref}</span>`;
+      }
+    });
+    alert(`Score: ${score} / ${qs.length}`);
+  }
+
+  // Scientific calculator
+  function calcAppend(v) { document.getElementById('calcDisplay').value += v; }
+  function calcClear() { document.getElementById('calcDisplay').value = ''; }
+  function calcCompute() {
+    const d = document.getElementById('calcDisplay');
+    try { d.value = eval(d.value); } catch(e) { d.value = 'Error'; }
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    renderFlashcard();
+    renderStudyExam();
+  });
+
 </script>
 </body>
 </html>
