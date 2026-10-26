@@ -1050,6 +1050,108 @@
     renderStudyExam();
   });
 
+
+
+
+  const INDUSTRIAL_ELECTRICAL_HAZARDS = [
+    {
+      short: "⚡ Live Voltage Probing (480V/240V/120V)",
+      task: "Live Voltage Verification & Phase Rotation Testing (480VAC / 240VAC / 120VAC / 24VDC)",
+      hazard: "Electric shock, electrocution, or accidental phase-to-phase / phase-to-ground short with meter probes",
+      mitigation: "Verify CAT III/IV 1000V meter & fused leads via Live-Dead-Live test; wear Class 0/00 voltage-rated gloves w/ leather protectors & safety glasses."
+    },
+    {
+      short: "🔥 Arc Flash / Energized Cabinet Entry",
+      task: "Opening Energized Control Panels / Switchgear for Live Functional & PLC Checkout",
+      hazard: "Arc flash thermal burns, arc blast pressure wave, flying molten metal/shrapnel",
+      mitigation: "Establish Limited & Restricted Approach Boundaries; post high-voltage barricades/warning tape; wear required Arc-Rated (AR) FR clothing, face shield, balaclava & hearing protection."
+    },
+    {
+      short: "🔌 Hi-Pot / Megger Insulation Testing",
+      task: "Dielectric Withstand (Hi-Pot) & Megohmmeter Insulation Resistance Testing",
+      hazard: "High-voltage DC injection shock and residual capacitive stored charge on cables/buses after test",
+      mitigation: "Isolate sensitive electronics; rope off test area with flashing beacon; discharge cables to ground with rated discharge stick before handling."
+    },
+    {
+      short: "🔒 LOTO & Stored Energy (Capacitors/VFDs)",
+      task: "Wiring Modifications, Component Replacement & Troubleshooting Between Live Tests",
+      hazard: "Unexpected re-energization, VFD DC bus capacitor stored energy, pneumatic/hydraulic trapped pressure",
+      mitigation: "Apply personal Lockout/Tagout (LOTO) at main disconnect; wait 5–10 mins for VFD DC bus discharge; verify Zero Energy State (0V) before touching conductors."
+    },
+    {
+      short: "🔄 Backfeed & Control Transformer Hazards",
+      task: "Energizing Control Circuits / 120VAC Foreign Voltage / Back-Fed Transformers",
+      hazard: "Step-up backfeed energizing primary 480V bus unexpectedly when powering secondary 120V control circuit",
+      mitigation: "Physically open primary fuses/breakers and verify schematic isolation before applying external test power."
+    },
+    {
+      short: "⚙️ Rotating Machinery & Motor Bump Test",
+      task: "Motor Rotation Bump Testing, Actuator Stroke Testing & Conveyor/Pump Run-In",
+      hazard: "Pinch/crush points, entanglement in couplings/fans, sudden mechanical startup",
+      mitigation: "Verify all machine guards are installed; clear personnel from skid before bumping motors; keep hands clear of valves/actuators and test E-Stop circuit first."
+    },
+    {
+      short: "🏗️ Overhead Crane / Forklift Skid Movement",
+      task: "Rigging, Lifting & Positioning Heavy Electrical Skids / Enclosures into Test Bay",
+      hazard: "Dropped load, crushed limbs, swinging skid impact, pinch points",
+      mitigation: "Inspect slings/shackles prior to lift; never stand under suspended loads; use taglines and designated spotter."
+    },
+    {
+      short: "🔊 Shop Floor Slips, Trips & High Noise",
+      task: "Routing Temporary Test Feeder Cables, Air Hoses & Working in Manufacturing Plant",
+      hazard: "Tripping over temporary 480V test umbilical cables, sharp sheet-metal edges, high decibel noise",
+      mitigation: "Use cable ramps/ overhead hooks for test feeders; maintain clean 36-inch clearance in front of live panels; wear cut-resistant gloves & hearing protection."
+    }
+  ];
+
+  function renderHazardPresetPills() {
+    const container = document.getElementById('hazardPresetPills');
+    if (!container) return;
+    container.innerHTML = '';
+    INDUSTRIAL_ELECTRICAL_HAZARDS.forEach((p) => {
+      const btn = document.createElement('span');
+      btn.className = 'preset-pill';
+      btn.textContent = p.short;
+      btn.onclick = () => {
+        appData.jhaTasks.push({ Task: p.task, Hazard: p.hazard, Mitigation: p.mitigation });
+        renderJhaTasks();
+      };
+      container.appendChild(btn);
+    });
+  }
+
+  function loadAllDefaultElectricalHazards() {
+    appData.jhaTasks = INDUSTRIAL_ELECTRICAL_HAZARDS.map(p => ({
+      Task: p.task,
+      Hazard: p.hazard,
+      Mitigation: p.mitigation
+    }));
+    renderJhaTasks();
+    alert('⚡ Loaded all 8 Industrial & Electrical Testing hazard rows.');
+  }
+
+  function addBlankJhaRow() {
+    appData.jhaTasks.push({ Task: '', Hazard: '', Mitigation: '' });
+    renderJhaTasks();
+  }
+
+  function renderJhaTasks() {
+    const tb = document.getElementById('jhaTaskBody');
+    if (!tb) return;
+    tb.innerHTML = '';
+    appData.jhaTasks.forEach((row, idx) => {
+      tb.innerHTML += `
+        <tr>
+          <td><strong>${idx + 1}</strong></td>
+          <td><textarea class="inline-edit" onchange="appData.jhaTasks[${idx}].Task=this.value">${row.Task || ''}</textarea></td>
+          <td><textarea class="inline-edit" onchange="appData.jhaTasks[${idx}].Hazard=this.value">${row.Hazard || ''}</textarea></td>
+          <td><textarea class="inline-edit" onchange="appData.jhaTasks[${idx}].Mitigation=this.value">${row.Mitigation || ''}</textarea></td>
+          <td class="no-print"><button class="danger sm" onclick="appData.jhaTasks.splice(${idx},1); renderJhaTasks();">✕</button></td>
+        </tr>
+      `;
+    });
+  }
+
 </script>
 </body>
 </html>
